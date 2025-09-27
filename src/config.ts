@@ -1,0 +1,17 @@
+export default {
+    site_title: "Baghraf Health Care Hospital | Medical & Healthcare",
+    site_description: "Baghraf Health Care Hospital | Medical & Healthcare",
+    google_site_verification: "your-google-site-verification",
+    image_logo_url: "https://example.com/logo.png",
+    emergencyNumber: "+628113487800",
+    emergencyCallNumber: "(0328) 2000333",
+    customerCareNumber: "(0328) 280-0000",
+    social_facebook_url: "https://facebook.com/your-facebook-page",
+    social_twitter_url: "https://twitter.com/your-twitter-account",
+    social_instagram_url: "https://instagram.com/your-instagram-account",
+    social_youtube_url: "https://youtube.com/your-youtube-channel",
+    social_linkedin_url: "https://linkedin.com/your-linkedin-account",
+    social_tiktok_url: "https://tiktok.com/your-tiktok-account",
+    whatsappNumber: "+628113597800",
+    supportEmail: "support@example.com",
+};

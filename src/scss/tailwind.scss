@@ -1,0 +1,137 @@
+/* Tailwind CSS directives with higher priority */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Enhanced Tailwind utilities for better integration */
+@layer utilities {
+  /* Display utilities with high priority */
+  .tw-block { display: block !important; }
+  .tw-flex { display: flex !important; }
+  .tw-grid { display: grid !important; }
+  .tw-hidden { display: none !important; }
+  .tw-inline { display: inline !important; }
+  .tw-inline-block { display: inline-block !important; }
+  
+  /* Flexbox utilities */
+  .tw-flex-col { flex-direction: column !important; }
+  .tw-flex-row { flex-direction: row !important; }
+  .tw-justify-center { justify-content: center !important; }
+  .tw-justify-between { justify-content: space-between !important; }
+  .tw-items-center { align-items: center !important; }
+  
+  /* Spacing utilities */
+  .tw-p-0 { padding: 0 !important; }
+  .tw-m-0 { margin: 0 !important; }
+  .tw-p-4 { padding: 1rem !important; }
+  .tw-p-6 { padding: 1.5rem !important; }
+  .tw-m-4 { margin: 1rem !important; }
+  
+  /* Text utilities */
+  .tw-text-center { text-align: center !important; }
+  .tw-text-left { text-align: left !important; }
+  .tw-text-right { text-align: right !important; }
+  .tw-font-medium { font-weight: 500 !important; }
+  .tw-font-semibold { font-weight: 600 !important; }
+  .tw-font-bold { font-weight: 700 !important; }
+  
+  /* Color utilities with project variables */
+  .tw-text-primary { color: var(--primary) !important; }
+  .tw-text-dark { color: var(--dark-text) !important; }
+  .tw-text-light { color: var(--light-text) !important; }
+  .tw-bg-primary { background-color: var(--primary) !important; }
+  .tw-bg-white { background-color: var(--white) !important; }
+  
+  /* Border and radius utilities */
+  .tw-rounded { border-radius: 0.25rem !important; }
+  .tw-rounded-lg { border-radius: 0.5rem !important; }
+  .tw-border { border-width: 1px !important; }
+  .tw-border-0 { border-width: 0 !important; }
+  
+  /* Width and height utilities */
+  .tw-w-full { width: 100% !important; }
+  .tw-h-full { height: 100% !important; }
+  .tw-w-auto { width: auto !important; }
+  .tw-h-auto { height: auto !important; }
+}
+
+/* Custom Tailwind components that work alongside Bulma */
+@layer components {
+  /* Card components with Tailwind utilities */
+  .card {
+    @apply bg-white rounded-lg shadow-card p-6;
+  }
+  
+  .card-hover {
+    @apply transition-shadow duration-300 hover:shadow-card-hover;
+  }
+  
+  /* Button components that complement Bulma buttons */
+  .btn-primary {
+    @apply bg-bulma-primary text-white px-4 py-2 rounded font-medium transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-200 text-gray-800 px-4 py-2 rounded font-medium transition-colors duration-200;
+  }
+  
+  /* Form components */
+  .input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-bulma-primary focus:border-transparent;
+  }
+  
+  /* Text utilities with project colors */
+  .text-primary {
+    @apply text-bulma-primary;
+  }
+  
+  .text-muted {
+    @apply text-light-text;
+  }
+  
+  .text-dark {
+    @apply text-dark-text;
+  }
+  
+  /* Background utilities */
+  .bg-card {
+    @apply bg-card-bg;
+  }
+  
+  .bg-sidebar {
+    @apply bg-sidebar-bg;
+  }
+  
+  /* Layout utilities for dashboard */
+  .dashboard-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+  }
+  
+  .dashboard-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  /* Responsive utilities for mobile-first design */
+  .mobile-stack {
+    @apply flex flex-col sm:flex-row gap-4;
+  }
+  
+  .responsive-text {
+    @apply text-sm sm:text-base lg:text-lg;
+  }
+}
+
+/* Dark mode support */
+@layer utilities {
+  .dark .card {
+    @apply bg-gray-800 text-white;
+  }
+  
+  .dark .input {
+    @apply bg-gray-700 border-gray-600 text-white;
+  }
+  
+  .dark .btn-secondary {
+    @apply bg-gray-600 text-white;
+  }
+}

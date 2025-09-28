@@ -8,14 +8,13 @@ const toaster = useToaster()
 
 const logout = async () => {
   try {
-    if (route.meta.isAdmin) {
-      await useApi.post('auth/admins/logout', token.value);
-    } else if (route.meta.isPatient) {
-      await useApi.post('auth/patients/logout', token.value);
-    }
-
-    userSession.logoutUser();
-    router.push('/');
+    await useApi.post('auth/logout', token.value).then(() => {
+      userSession.logoutUser();
+      router.push('/auth/login');
+    }).catch((error) => {
+      console.error('Error during logout API call:', error);
+      toaster.error('Logout failed. Please try again.');
+    });
   } catch (error) {
     toaster.error('Failed to logout');
   }
@@ -48,8 +47,8 @@ const logout = async () => {
         />
 
         <div class="meta">
-          <span>{{ userSession?.user?.full_name }}</span>
-          <span>Admin</span>
+          <span>{{ userSession?.user?.nm_user }}</span>
+          <span>{{ userSession?.user?.level }}</span>
         </div>
       </div>
 
@@ -70,7 +69,7 @@ const logout = async () => {
         </div>
       </a> -->
 
-      <hr class="dropdown-divider">
+      <!-- <hr class="dropdown-divider"> -->
 
       <!-- <RouterLink to="/modules/master/module-app"
         role="menuitem"
@@ -88,7 +87,7 @@ const logout = async () => {
         </div>
       </RouterLink> -->
 
-      <RouterLink to="/modules/user"
+      <!-- <RouterLink to="/modules/user"
         role="menuitem"
         class="dropdown-item is-media"
       >
@@ -102,7 +101,7 @@ const logout = async () => {
           <span>User</span>
           <span>Manage User</span>
         </div>
-      </RouterLink>
+      </RouterLink> -->
 
       <!-- <a
         href="#"
@@ -121,7 +120,7 @@ const logout = async () => {
         </div>
       </a> -->
 
-      <hr class="dropdown-divider">
+      <!-- <hr class="dropdown-divider"> -->
 
       <!-- <a
         href="#"

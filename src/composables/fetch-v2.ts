@@ -29,7 +29,7 @@ export function useApiFetchV2(event?: H3Event) {
       const response = await api(url, { method, body, ...options });
 
       if (showToastOption) {
-        const successMessage = response.meta.message || response.statusText || 'Unknown success message';
+        const successMessage = response?.message || response?.statusText || 'Unknown success message';
 
         toast.add({
           severity: 'success',

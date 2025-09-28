@@ -1,16 +1,4 @@
 <script setup lang="ts">
-import { useSalesBarChart } from '/@src/data/dashboards/sales/salesBarChart'
-import { useBedOccupancyRate } from '/@src/data/dashboards/hospital/bedOccupancyRate'
-import { useSalesPerDay } from '/@src/data/dashboards/hospital/salesPerDay'
-import { useOutPatientPerDay } from '/@src/data/dashboards/hospital/patientTypePerDay/outPatientPerDay'
-import { useEmergencyPatientPerDay } from '/@src/data/dashboards/hospital/patientTypePerDay/emergencyPatientPerDay'
-import { useInPatientPerDay } from '../../../../data/dashboards/hospital/patientTypePerDay/inpatientPerDay'
-import { useMonthlyRevenue } from '/@src/data/dashboards/hospital/Revenue/monthlyRevenue'
-import { useCurrentYearRevenue } from '/@src/data/dashboards/hospital/Revenue/currentYearRevenue'
-import { useMonthlyAdmission } from '/@src/data/dashboards/hospital/Admission/monthlyAdmission'
-import { useCurrentYearAdmission } from '/@src/data/dashboards/hospital/Admission/currentYearAdmission'
-import { useInpatientVolumeSales } from '/@src/data/dashboards/hospital/InpatientVolumeSales/inpatientVolumeSales'
-import { useYTDInpatientSales } from '/@src/data/dashboards/hospital/InpatientVolumeSales/ytdInpatientSales'
 import { useToast } from 'primevue/usetoast'
 import dayjs from 'dayjs'
 
@@ -21,13 +9,14 @@ const router = useRouter()
 const route = useRoute()
 const toast = useToast();
 const useApi = useApiFetchV2();
-const baseUrlStorage = import.meta.env.VITE_STORAGE_BASE_URL;
 
 // Filter variables
 const filterRange = ref({
   start: route.query.start_date ? dayjs(route.query.start_date as string || new Date()).toDate() : dayjs().startOf('month').toDate(),
   end: route.query.end_date ? dayjs(route.query.end_date as string || new Date()).toDate() : dayjs().endOf('month').toDate(),
 })
+const itemCode = ref("")
+const itemName = ref("")
 
 let debounceTimer: any;
 watch(
@@ -46,192 +35,122 @@ watch(
   },
   { deep: true }
 );
-/**
- * Summary Data
- */
-const isFetchingSummary = ref(false);
-const summary: any = ref<SummaryDTO>({
-  total_debit: 0,
-  total_credit: 0,
-  net: 0,
-  unique_patients: 0,
-  unique_episodes: 0,
-  tx_count: 0
-});
-
-const summaryData = async () => {
-  isFetchingSummary.value = true;
-  await useApi.get('dashboard/income/summary', {
-    from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
-    to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
-  }, false).then((res: any) => {
-    summary.value = res.data
-  }).catch((err: any) => {
-    console.log(err)
-  }).finally(() => {
-    isFetchingSummary.value = false;
-  });
-};
 
 /**
- * Revenue Trend
+ * Box Materials Data
  */
-const isFetchingTrend = ref(false);
-const revenueTrend: any = ref<RevenueTrend[]>([
-  {
-    date: new Date(),
-    debit: 0,
-    credit: 0,
-    net: 0
-  }
-]);
+const isFetchingReport = ref(false);
+const boxMaterials = ref<BoxMaterials[]>([]);
+const page = ref(1)
+const limit = ref(10)
+const total = ref(0)
+const hasNext = ref(false)
+const hasPrev = ref(false)
+const totalPages = ref(1)
 
-const trendData = async () => {
-  isFetchingTrend.value = true;
-  await useApi.get('dashboard/income/trend', {
+const boxMaterialsData = async () => {
+  isFetchingReport.value = true;
+  await useApi.get('auxiliary-material', {
+    page: page.value,
+    limit: limit.value,
     from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
     to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
+    item_code: itemCode.value || '',
+    item_name: itemName.value || '',
+    lap: 'Box'
   }, false).then((res: any) => {
-    revenueTrend.value = res.data
+    // Map API response to BoxMaterials type
+    const mappedData = res.data.map((item: any): BoxMaterials => ({
+      akhir: item.akhir || 0,
+      awal: item.awal || 0,
+      item_code: item.item_code || '',
+      item_group: item.item_group || '',
+      item_name: item.item_name || '',
+      item_type_code: item.item_type_code || '',
+      keluar: item.keluar || 0,
+      location_code: item.location_code || '',
+      masuk: item.masuk || 0,
+      opname: item.opname || 0,
+      peny: item.peny || 0,
+      selisih: item.selisih || 0,
+      unit_code: item.unit_code || '',
+    }));
+
+    boxMaterials.value = mappedData;
+
+    // Handle meta and pagination info
+    if (res.meta && res.meta.pagination) {
+      total.value = res.meta.pagination.totalCount || 0;
+      hasNext.value = res.meta.pagination.hasNext || false;
+      hasPrev.value = res.meta.pagination.hasPrev || false;
+      totalPages.value = res.meta.pagination.totalPages || 1;
+      // Update current page if different from response
+      if (res.meta.pagination.page && res.meta.pagination.page !== page.value) {
+        page.value = res.meta.pagination.page;
+      }
+    } else if (res.total !== undefined) {
+      total.value = res.total;
+      // Fallback calculations for hasNext/hasPrev
+      hasNext.value = page.value * limit.value < total.value;
+      hasPrev.value = page.value > 1;
+      totalPages.value = Math.max(1, Math.ceil(total.value / limit.value));
+    } else if (res.pagination && res.pagination.total) {
+      total.value = res.pagination.total;
+      hasNext.value = res.pagination.hasNext || false;
+      hasPrev.value = res.pagination.hasPrev || false;
+      totalPages.value = res.pagination.totalPages || 1;
+    } else {
+      // Fallback: estimate total based on current page and data length
+      total.value = (page.value - 1) * limit.value + mappedData.length;
+      hasNext.value = mappedData.length === limit.value;
+      hasPrev.value = page.value > 1;
+      totalPages.value = Math.max(1, Math.ceil(total.value / limit.value));
+    }
   }).catch((err: any) => {
     console.log(err)
+    boxMaterials.value = [];
+    total.value = 0;
+    hasNext.value = false;
+    hasPrev.value = false;
+    totalPages.value = 1;
   }).finally(() => {
-    isFetchingTrend.value = false;
-  });
-};
-
-/**
- * Top Unit
- */
-const isFetchingTopUnit = ref(false);
-const TopUnit = ref<TopUnitIncome[]>([]);
-
-const topUnitData = async () => {
-  isFetchingTopUnit.value = true;
-  await useApi.get('dashboard/income/top-units', {
-    from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
-    to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
-  }, false).then((res: any) => {
-    TopUnit.value = res.data
-  }).catch((err: any) => {
-    console.log(err)
-  }).finally(() => {
-    isFetchingTopUnit.value = false;
-  });
-};
-
-/**
- * Top Provider
- */
-const isFetchingTopProvider = ref(false);
-const TopProvider = ref<TopProviderIncome[]>([]);
-
-const topProviderData = async () => {
-  isFetchingTopProvider.value = true;
-  await useApi.get('dashboard/income/top-providers', {
-    from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
-    to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
-  }, false).then((res: any) => {
-    TopProvider.value = res.data
-  }).catch((err: any) => {
-    console.log(err)
-  }).finally(() => {
-    isFetchingTopProvider.value = false;
-  });
-};
-
-/**
- * Top Guarantor
- */
-const isFetchingTopGuarantor = ref(false);
-const TopGuarantor = ref<TopGuarantorIncome[]>([]);
-
-const topGuarantorData = async () => {
-  isFetchingTopGuarantor.value = true;
-  await useApi.get('dashboard/income/top-guarantors', {
-    from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
-    to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
-  }, false).then((res: any) => {
-    TopGuarantor.value = res.data
-  }).catch((err: any) => {
-    console.log(err)
-  }).finally(() => {
-    isFetchingTopGuarantor.value = false;
-  });
-};
-
-/**
- * Revenue By Service
- */
-const isFetchingRevenueByService = ref(false);
-const revenueByService = ref<RevenueByServiceIncome[]>([]);
-
-const revenueByServiceData = async () => {
-  isFetchingRevenueByService.value = true;
-  await useApi.get('dashboard/income/revenue-by-service', {
-    from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
-    to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
-  }, false).then((res: any) => {
-    revenueByService.value = res.data
-  }).catch((err: any) => {
-    console.log(err)
-  }).finally(() => {
-    isFetchingRevenueByService.value = false;
-  });
-};
-
-/**
- * Revenue IPOP
- */
-const isFetchingRevenueIPOP = ref(false);
-const revenueIPOP = ref<RevenueIPOPIncome[]>([]);
-
-const revenueIPOPData = async () => {
-  isFetchingRevenueIPOP.value = true;
-  await useApi.get('dashboard/income/mix-ipop', {
-    from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
-    to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
-  }, false).then((res: any) => {
-    revenueIPOP.value = res.data
-  }).catch((err: any) => {
-    console.log(err)
-  }).finally(() => {
-    isFetchingRevenueIPOP.value = false;
+    isFetchingReport.value = false;
   });
 };
 
 // Filter functions
 const handleFilterChange = () => {
-  summaryData();
-  trendData();
-  topUnitData();
-  topProviderData();
-  topGuarantorData();
-  revenueByServiceData();
-  revenueIPOPData();
+  page.value = 1; // Reset to first page when filter changes
+  boxMaterialsData();
+}
+function handleChangePage(p: number) {
+  page.value = p
+  boxMaterialsData()
+}
+function handleChangeLimit(l: number) {
+  limit.value = l
+  page.value = 1 // Reset to first page when limit changes
+  boxMaterialsData()
 }
 
 const applyFilter = () => {
-  summaryData();
-  trendData();
-  topUnitData();
-  topProviderData();
-  topGuarantorData();
-  revenueByServiceData();
-  revenueIPOPData();
+  page.value = 1; // Reset to first page when applying filter
+  boxMaterialsData();
 }
 
 onMounted(() => {
-  summaryData()
-  trendData()
-  topUnitData()
-  topProviderData()
-  topGuarantorData()
-  revenueByServiceData()
-  revenueIPOPData()
+  boxMaterialsData()
 })
 
+const clearItemCode = () => {
+  itemCode.value = "";
+  handleFilterChange();
+}
 
+const clearItemName = () => {
+  itemName.value = "";
+  handleFilterChange();
+}
 </script>
 
 <template>
@@ -239,59 +158,111 @@ onMounted(() => {
     <!--Header-->
     <div
       class="dashboard-header sticky top-0 z-10 bg-gradient-to-r from-white via-gray-50 to-white backdrop-blur-sm border border-gray-200/60 shadow-xl rounded-3xl p-6 mt-4">
-      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 w-full">
+      <div class="flex flex-col lg:justify-between gap-6 w-full">
 
         <!-- Header Info Section -->
         <div class="flex items-center space-x-4">
-          <div class="p-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-lg">
+          <div class="p-3 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-2xl shadow-lg">
             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4">
               </path>
             </svg>
           </div>
           <div>
             <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-              Income Dashboard
+                Laporan Pertanggung Jawaban Mutasi Bahan Penolong (Box)
             </h3>
-            <p class="text-gray-600 text-sm font-medium">Filter data based on selected period and criteria</p>
+            <p class="text-gray-600 text-sm font-medium">Filter data berdasarkan periode dan kriteria yang dipilih</p>
           </div>
         </div>
-
         <!-- Filter Controls Section -->
-        <div class="filter-controls ml-auto">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-end justify-items-end">
-            <div class="booking-bar col-span-2">
-              <ClientOnly>
+        <div class="filter-controls">
+          <div class="relative w-full">
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 items-end justify-items-end">
+              <!-- Range Date -->
+              <div class="filter-group w-full col-span-2">
                 <label class="block text-xs font-semibold text-gray-700 mb-0 uppercase tracking-wide me-2">Range
                   Date:</label>
-                <VDatePicker v-model.range="filterRange" color="green" trim-weeks show-weeknumbers
-                  :first-day-of-week="2">
-                  <template #default="{ inputValue, inputEvents }">
-                    <div class="booking-bar-inputs">
-                      <VControl icon="lucide:calendar">
-                        <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                <div class="booking-bar col-span-2">
+                  <ClientOnly>
+                    <VDatePicker v-model.range="filterRange" color="amber" trim-weeks show-weeknumbers
+                      :first-day-of-week="2">
+                      <template #default="{ inputValue, inputEvents }">
+                        <div class="booking-bar-inputs">
+                          <VControl icon="lucide:calendar">
+                            <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                             focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
+                             hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="Start"
+                              :value="inputValue.start" v-on="inputEvents.start">
+                          </VControl>
+                          <VControl icon="lucide:calendar">
+                            <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                             focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
+                             hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="End"
+                              :value="inputValue.end" v-on="inputEvents.end">
+                          </VControl>
+                        </div>
+                      </template>
+                    </VDatePicker>
+                  </ClientOnly>
+                </div>
+              </div>
+
+              <!-- Kode Item -->
+              <div class="filter-group w-full col-span-1">
+                <div class="flex items-center justify-between mb-2">
+                  <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Kode Item
+                  </label>
+                </div>
+
+                <div class="relative">
+                  <input type="text" v-model="itemCode" @input="handleFilterChange"
+                    placeholder="Masukkan Kode Item" class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
                            focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
-                           hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="Start"
-                          :value="inputValue.start" v-on="inputEvents.start">
-                      </VControl>
-                      <VControl icon="lucide:calendar">
-                        <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                           hover:border-gray-300 appearance-none cursor-text shadow-sm" aria-label="Kode Item" />
+
+                  <!-- Tombol X di dalam input -->
+                  <button v-if="itemCode" type="button" @click="clearItemCode" aria-label="Clear itemCode"
+                    class="absolute inset-y-0 right-7 flex items-center px-2 text-gray-400 hover:text-gray-600 focus:outline-none">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Nama Item -->
+              <div class="filter-group w-full col-span-1">
+                <div class="flex items-center justify-between mb-2">
+                  <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Nama Item
+                  </label>
+                </div>
+
+                <div class="relative">
+                  <input type="text" v-model="itemName" @input="handleFilterChange"
+                    placeholder="Masukkan Nama Item" class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
                            focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
-                           hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="End"
-                          :value="inputValue.end" v-on="inputEvents.end">
-                      </VControl>
-                    </div>
-                  </template>
-                </VDatePicker>
-              </ClientOnly>
+                           hover:border-gray-300 appearance-none cursor-text shadow-sm" aria-label="Nama Item" />
+
+                  <!-- Tombol X di dalam input -->
+                  <button v-if="itemName" type="button" @click="clearItemName" aria-label="Clear itemName"
+                    class="absolute inset-y-0 right-7 flex items-center px-2 text-gray-400 hover:text-gray-600 focus:outline-none">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
             </div>
-            <!-- Apply Filter Button -->
-            <div class="filter-group w-full">
-              <button @click="applyFilter" class="w-full px-6 py-3 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 
-                         text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 
-                         transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-orange-200 
-                         flex items-center justify-center space-x-2">
+            <div class="mt-3 flex justify-end">
+              <button @click="applyFilter"
+                class="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 
+                       text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 
+                       transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-amber-200 flex items-center justify-center space-x-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -303,23 +274,10 @@ onMounted(() => {
         </div>
       </div>
     </div>
-
-    <SummaryIncomeDashboard :summary="summary" :isFetching="isFetchingSummary" />
-
-    <RevenueTrendIncomeDashboard :revenueTrend="revenueTrend" :isFetching="isFetchingTrend" />
-
-    <TopUnitIncomeDashboard :items="TopUnit" :isFetching="isFetchingTopUnit" :limit=5 />
-
-    <TopProviderIncomeDashboard :items="TopProvider" :isFetching="isFetchingTopProvider" :limit=5 />
-
-    <TopGuarantorIncomeDashboard :items="TopGuarantor" :isFetching="isFetchingTopGuarantor" :limit=5 />
-
-    <RevenueByServiceIncomeDashboard :items="revenueByService" :isFetching="isFetchingRevenueByService" />
-
-    <RevenueIPOPIncomeDashboard :items="revenueIPOP" :isFetching="isFetchingRevenueIPOP" />
+    <BoxMaterialsTable :items="boxMaterials" :isFetching="isFetchingReport" :page="page" :limit="limit"
+      :total="total" :hasNext="hasNext" :hasPrev="hasPrev" :totalPages="totalPages" @change-page="handleChangePage" @change-limit="handleChangeLimit" />
   </div>
 </template>
-
 
 <style lang="scss">
 @import '/@src/scss/abstracts/all';

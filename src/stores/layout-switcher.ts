@@ -29,7 +29,7 @@ export const useLayoutSwitcher = defineStore('layoutSwitcher', () => {
   // navbar
   const NavbarLayout = defineAsyncComponent({
     // loader: () => import('/@src/layouts/navbar.vue'),
-    loader: () => import('/@src/layouts/main-navbar.vue'),
+    loader: () => import('/@src/layouts/admin.vue'),
     delay: 0,
     suspensible: false,
   })

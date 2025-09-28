@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { SideblockItem, SideblockItemAction } from './sideblock.types'
-import VCollapseLinksCustom from './VCollapseLinksCustom.vue'
 
 const props = defineProps<{
   link: SideblockItem,
@@ -32,14 +31,14 @@ const isOpen = ref(false)
       <span v-if="props.link.badge !== undefined" class="badge">{{ props.link.badge }}</span>
     </a>
   </li>
-  <VCollapseLinksCustom v-else-if="props.link.type === 'collapse' && props.link.id === 'dashboard'" 
+  <VCollapseLinksTab v-else-if="props.link.type === 'collapse' && props.link.group === 'tab'" 
     :links="props.link.children"
     @toggleDesktopSideblock="emits('toggle')" v-model:isOpen="isOpen">
     <div class="icon">
       <VIcon :icon="props.link.icon" />
     </div>
     {{ props.link.label }}
-  </VCollapseLinksCustom>
+  </VCollapseLinksTab>
   <VCollapseLinks v-else-if="props.link.type === 'collapse'" :links="props.link.children"
     @toggleDesktopSideblock="emits('toggle')" v-model:isOpen="isOpen">
     <div class="icon">

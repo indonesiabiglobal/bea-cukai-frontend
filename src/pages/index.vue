@@ -1,5 +1,10 @@
 <script setup lang="ts">
 import config from '/@src/config.ts'
+definePage({
+  meta: {
+    requiresAuth: true,
+  },
+})  
 
 const title = config.site_title
 const pageTitle = useVueroContext<string>('page-title')
@@ -9,7 +14,7 @@ useHead({
 })
 
 onMounted(() => {
-  pageTitle.value = 'Main Panel'
+  pageTitle.value = 'Fukusuke Kogyo Indonesia'
 })
 </script>
 

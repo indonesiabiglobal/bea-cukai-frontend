@@ -30,35 +30,26 @@ export default definePlugin(async ({ router, pinia, event }) => {
     const userSession = useUserSession(pinia)
     const token = useUserToken(event)
     const $fetch = useApiFetch(event)
+    console.log('====================================');
+    console.log(userSession.user);
+    console.log(token.value);
+    console.log('====================================');
 
     if (token.value && !userSession.user) {
       try {
         // Do api request call to retreive user profile.
         // Note that the api is provided with json-server
-        let userData = null
-        if (to.meta.isPatient) {
-          userData = await $fetch('/profile/patients/user')
-        }
-        else if (to.meta.isAdmin) {
-          userData = await $fetch('/profile/admins/user')
-        }
-        // Jika status OK (200), simpan datanya
-        userSession.setUser(userData.result)
+        const user = await $fetch('/users/profile')
+        userSession.setUser(user.result)
       }
       catch (err) {
         token.value = undefined
       }
     }
 
-    if (to.meta.requiresAuth && !token.value && to.meta.isAdmin) {
+    if (to.meta.requiresAuth && !token.value) {
       return {
-        path: '/auth/admins',
-        query: { redirect: to.fullPath },
-      }
-    }
-    else if (to.meta.requiresAuth && !token.value && to.meta.isPatient) {
-      return {
-        path: '/auth/patients',
+        path: '/auth/login',
         query: { redirect: to.fullPath },
       }
     }

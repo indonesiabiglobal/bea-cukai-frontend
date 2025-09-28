@@ -1,12 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, provide, markRaw, shallowRef } from 'vue'
-
-// Import dashboard components
-import PatientDashboard from '/@src/components/pages/dashboards/hospital/PatientDashboard.vue'
-import IncomeDashboard from '/@src/components/pages/dashboards/hospital/IncomeDashboard.vue'
-import PurchasingDashboard from '/@src/components/pages/dashboards/hospital/PurchasingDashboard.vue'
-import SaleDashboard from '/@src/components/pages/dashboards/hospital/SaleDashboard.vue'
-import VisitDashboard from '/@src/components/pages/dashboards/hospital/VisitDashboard.vue'
+import { ref, onMounted, onUnmounted, provide, shallowRef } from 'vue'
+import { availableMenus, type MenuItem } from '../../data/apps/menu'
 
 interface TabItem {
   id: string
@@ -16,63 +10,10 @@ interface TabItem {
   path: string
 }
 
-interface MenuItem {
-  label: string
-  icon: string
-  path: string
-  component: any
-  description: string
-  bgColor: string
-}
-
 // Reactive state (using shallowRef for tabs to prevent deep reactivity on components)
 const activeTab = ref('home')
 const showAddMenu = ref(false)
 const tabs = ref<TabItem[]>([])
-
-// Available menu items with components marked as raw to prevent reactivity
-const availableMenus: MenuItem[] = [
-  {
-    label: 'Patient Dashboard',
-    icon: 'lnil lnil-user',
-    path: '/dashboard/patient',
-    component: markRaw(PatientDashboard),
-    description: 'Monitor patient statistics and activities',
-    bgColor: 'bg-blue-500'
-  },
-  {
-    label: 'Income Dashboard',
-    icon: 'lnil lnil-suitcase',
-    path: '/dashboard/income',
-    component: markRaw(IncomeDashboard),
-    description: 'Track revenue and financial performance',
-    bgColor: 'bg-green-500'
-  },
-  {
-    label: 'Purchasing Dashboard',
-    icon: 'lnil lnil-dropbox',
-    path: '/dashboard/purchasing',
-    component: markRaw(PurchasingDashboard),
-    description: 'Manage procurement and inventory',
-    bgColor: 'bg-purple-500'
-  },
-  {
-    label: 'Sale Dashboard',
-    icon: 'lnil lnil-medicine',
-    path: '/dashboard/sale',
-    component: markRaw(SaleDashboard),
-    description: 'Monitor sales and transactions',
-    bgColor: 'bg-orange-500'
-  },
-  {
-    label: 'Visit Dashboard',
-    icon: 'lnil lnil-hospital-location',
-    path: '/dashboard/visit',
-    component: markRaw(VisitDashboard),
-    description: 'Track patient visits and appointments',
-    bgColor: 'bg-red-500'
-  }
-]
 
 // Methods
 const setActiveTab = (tabId: string) => {
@@ -245,16 +186,18 @@ onUnmounted(() => {
     </div>
 
     <!-- Tab Content -->
-    <div class="tab-content flex-1 overflow-hidden">
+    <div class="tab-content flex-1 overflow-y-auto">
 
       <!-- Home Content -->
       <div v-if="activeTab === 'home'" class="h-full">
-        <div class="max-w-7xl mx-auto px-6 py-8">
+        <div class="mx-auto px-6 py-8">
 
           <!-- Welcome Header -->
           <div class="bg-white rounded-xl p-8 text-gray-800 mb-8">
-            <h1 class="text-3xl font-bold mb-2">🏥 Welcome to Hospital Dashboard</h1>
-            <p class="text-lg opacity-90">Select a dashboard from the menu to get started</p>
+            <!-- icon pabrik -->
+            
+            <h1 class="text-3xl font-bold mb-2">🏭 Selamat Datang di Fukusuke Kogyo Indonesia</h1>
+            <p class="text-lg opacity-90">Pilih report dari menu untuk memulai</p>
           </div>
 
           <!-- Quick Access Cards -->
@@ -274,7 +217,7 @@ onUnmounted(() => {
                   </div>
                 </div>
                 <div class="flex items-center text-blue-600 text-sm font-medium">
-                  <span>Open Dashboard</span>
+                  <span>Open Menu</span>
                   <i class="fas fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                 </div>
               </div>
@@ -284,11 +227,11 @@ onUnmounted(() => {
           <!-- Recent Activity -->
           <div class="card">
             <div class="card-content p-6">
-              <h3 class="text-xl font-bold text-gray-800 mb-4">📊 Dashboard Overview</h3>
+              <h3 class="text-xl font-bold text-gray-800 mb-4">📊 Menu Overview</h3>
               <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div class="text-center">
                   <div class="text-2xl font-bold text-blue-600 mb-1">5</div>
-                  <div class="text-sm text-gray-600">Available Dashboards</div>
+                  <div class="text-sm text-gray-600">Available Menus</div>
                 </div>
                 <div class="text-center">
                   <div class="text-2xl font-bold text-green-600 mb-1">{{ tabs.length }}</div>
@@ -328,9 +271,12 @@ onUnmounted(() => {
 }
 
 .tabs-bar {
-  position: relative;
+  position: sticky;
+  top: 16px;
+  z-index: 100;
   flex-shrink: 0;
   border-bottom: 1px solid #e2e8f0;
+  border-radius: 8px;
 
   .scrollbar-hide {
     scrollbar-width: none;

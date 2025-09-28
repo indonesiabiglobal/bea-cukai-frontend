@@ -15,8 +15,6 @@ const filterRange = ref({
   start: route.query.start_date ? dayjs(route.query.start_date as string || new Date()).toDate() : dayjs().startOf('month').toDate(),
   end: route.query.end_date ? dayjs(route.query.end_date as string || new Date()).toDate() : dayjs().endOf('month').toDate(),
 })
-const selectedCategory = ref("")
-const selectedVendor = ref("")
 
 let debounceTimer: any;
 watch(
@@ -37,65 +35,26 @@ watch(
 );
 
 /**
- * Category Data
- */
-const isFetchingCategory = ref(false);
-const categories: any = ref<ProductCategory>({
-  category_code: '',
-  category_name: '',
-  product_count: 0,
-});
-
-const categoryData = async () => {
-  isFetchingCategory.value = true;
-  await useApi.get('products/categories', {}, false).then((res: any) => {
-    categories.value = res.data
-  }).catch((err: any) => {
-    console.log(err)
-  }).finally(() => {
-    isFetchingCategory.value = false;
-  });
-};
-
-/**
- * Category Data
- */
-const isFetchingVendor = ref(false);
-const vendors: any = ref<PurchasingVendor>({
-  vendor_code: '',
-  vendor_name: '',
-});
-
-const vendorData = async () => {
-  isFetchingVendor.value = true;
-  await useApi.get('purchases/vendors', {}, false).then((res: any) => {
-    vendors.value = res.data
-  }).catch((err: any) => {
-    console.log(err)
-  }).finally(() => {
-    isFetchingVendor.value = false;
-  });
-};
-
-/**
  * Summary Data
  */
 const isFetchingSummary = ref(false);
-const summary: any = ref<PurchaseSummary>({
-  total_qty: 0,
-  total_subtotal: 0,
-  unique_vendors: 0,
-  unique_items: 0,
-  tx_count: 0,
+
+const summary: any = ref<VisitSummary>({
+  total_visits: 0,
+  unique_patients: 0,
+  inpatient_visits: 0,
+  outpatient_visits: 0,
+  admitted_from_op: 0,
+  discharges: 0,
+  alos_days: 0,
+  median_los_days: 0
 });
 
 const summaryData = async () => {
   isFetchingSummary.value = true;
-  await useApi.get('dashboard/purchase/summary', {
+  await useApi.get('dashboard/visits/summary', {
     from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
     to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
-    category: selectedCategory.value || '',
-    vendor: selectedVendor.value || '',
   }, false).then((res: any) => {
     summary.value = res.data
   }).catch((err: any) => {
@@ -109,15 +68,21 @@ const summaryData = async () => {
  * Revenue Trend
  */
 const isFetchingTrend = ref(false);
-const revenueTrend: any = ref<PurchaseRevenueTrend[]>([]);
+const revenueTrend: any = ref<VisitTrendPoint[]>([
+  {
+    date: new Date(),
+    visits: 0,
+    inpatient: 0,
+    outpatient: 0,
+    admits: 0
+  }
+]);
 
 const trendData = async () => {
   isFetchingTrend.value = true;
-  await useApi.get('dashboard/purchase/trend', {
+  await useApi.get('dashboard/visits/trend', {
     from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
     to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
-    category: selectedCategory.value || '',
-    vendor: selectedVendor.value || '',
   }, false).then((res: any) => {
     revenueTrend.value = res.data
   }).catch((err: any) => {
@@ -128,107 +93,158 @@ const trendData = async () => {
 };
 
 /**
- * Top Vendor
+ * Top Unit
  */
-const isFetchingTopVendor = ref(false);
-const topVendor = ref<TopVendorPurchase[]>([]);
+const isFetchingTopService = ref(false);
+const TopService = ref<TopServiceVisit[]>([]);
 
-const topVendorData = async () => {
-  isFetchingTopVendor.value = true;
-  await useApi.get('dashboard/purchase/top-vendors', {
+const topServiceData = async () => {
+  isFetchingTopService.value = true;
+  await useApi.get('dashboard/visits/top-services', {
     from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
     to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
-    category: selectedCategory.value || '',
-    vendor: selectedVendor.value || '',
   }, false).then((res: any) => {
-    topVendor.value = res.data
+    TopService.value = res.data
   }).catch((err: any) => {
     console.log(err)
   }).finally(() => {
-    isFetchingTopVendor.value = false;
+    isFetchingTopService.value = false;
   });
 };
 
 /**
- * Top Product
+ * Top Guarantor
  */
-const isFetchingTopProduct = ref(false);
-const TopProduct = ref<TopProductPurchase[]>([]);
+const isFetchingTopGuarantor = ref(false);
+const TopGuarantor = ref<TopGuarantorVisit[]>([]);
 
-const topProductData = async () => {
-  isFetchingTopProduct.value = true;
-  await useApi.get('dashboard/purchase/top-products', {
+const topGuarantorData = async () => {
+  isFetchingTopGuarantor.value = true;
+  await useApi.get('dashboard/visits/top-guarantors', {
     from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
     to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
-    category: selectedCategory.value || '',
-    vendor: selectedVendor.value || '',
   }, false).then((res: any) => {
-    TopProduct.value = res.data
+    TopGuarantor.value = res.data
   }).catch((err: any) => {
     console.log(err)
   }).finally(() => {
-    isFetchingTopProduct.value = false;
+    isFetchingTopGuarantor.value = false;
   });
 };
 
 /**
- * Revenue By Category
+ * Visit by Day of Week
  */
-const isFetchingRevenueByCategory = ref(false);
-const revenueByCategory = ref<PurchaseByCategory[]>([]);
+const isFetchingvisitByDayOfWeek = ref(false);
+const visitByDayOfWeek = ref<VisitByDayOfWeek[]>([]);
 
-const revenueByCategoryData = async () => {
-  isFetchingRevenueByCategory.value = true;
-  await useApi.get('dashboard/purchase/by-category', {
+const visitByDayOfWeekData = async () => {
+  isFetchingvisitByDayOfWeek.value = true;
+  await useApi.get('dashboard/visits/by-dow', {
     from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
     to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
-    category: selectedCategory.value || '',
-    vendor: selectedVendor.value || '',
   }, false).then((res: any) => {
-    revenueByCategory.value = res.data
+    visitByDayOfWeek.value = res.data
   }).catch((err: any) => {
     console.log(err)
   }).finally(() => {
-    isFetchingRevenueByCategory.value = false;
+    isFetchingvisitByDayOfWeek.value = false;
   });
 };
+
+/**
+ * Visiti by Day of Week
+ */
+const isFetchingvisitByRegion = ref(false);
+const visitByRegion = ref<VisitByRegion[]>([]);
+
+const visitByRegionData = async () => {
+  isFetchingvisitByRegion.value = true;
+  await useApi.get('dashboard/visits/by-region', {
+    from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
+    to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
+  }, false).then((res: any) => {
+    visitByRegion.value = res.data
+  }).catch((err: any) => {
+    console.log(err)
+  }).finally(() => {
+    isFetchingvisitByRegion.value = false;
+  });
+};
+
+/**
+ * Visiti IPOP
+ */
+const isFetchingvisitIPOP = ref(false);
+const visitIPOP = ref<VisitIPOP[]>([]);
+
+const visitIPOPData = async () => {
+  isFetchingvisitIPOP.value = true;
+  await useApi.get('dashboard/visits/mix-ipop', {
+    from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
+    to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
+  }, false).then((res: any) => {
+    visitIPOP.value = res.data
+  }).catch((err: any) => {
+    console.log(err)
+  }).finally(() => {
+    isFetchingvisitIPOP.value = false;
+  });
+};
+
+/**
+ * Visiti LOSBucketDischarge
+ */
+const isFetchingVisitLOSBucketDischarge = ref(false);
+const visitLOSBucketDischarge = ref<VisitLOSBucketDischarge[]>([]);
+
+const visitLOSBucketDischargeData = async () => {
+  isFetchingVisitLOSBucketDischarge.value = true;
+  await useApi.get('dashboard/visits/los-buckets', {
+    from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
+    to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
+  }, false).then((res: any) => {
+    visitLOSBucketDischarge.value = res.data
+  }).catch((err: any) => {
+    console.log(err)
+  }).finally(() => {
+    isFetchingVisitLOSBucketDischarge.value = false;
+  });
+};
+
 // Filter functions
 const handleFilterChange = () => {
   summaryData();
   trendData();
-  topVendorData();
-  topProductData();
-  revenueByCategoryData();
+  topServiceData();
+  topGuarantorData();
+  visitByDayOfWeekData();
+  visitByRegionData();
+  visitIPOPData();
+  visitLOSBucketDischargeData();
 }
 
 const applyFilter = () => {
-  summaryData();
-  trendData();
-  topVendorData();
-  topProductData();
-  revenueByCategoryData();
+  summaryData()
+  trendData()
+  topServiceData()
+  topGuarantorData()
+  visitByDayOfWeekData()
+  visitByRegionData()
+  visitIPOPData()
+  visitLOSBucketDischargeData()
 }
 
 onMounted(() => {
   summaryData()
   trendData()
-  topVendorData()
-  topProductData()
-  revenueByCategoryData()
-  categoryData()
-  vendorData()
+  topServiceData()
+  topGuarantorData()
+  visitByDayOfWeekData()
+  visitByRegionData()
+  visitIPOPData()
+  visitLOSBucketDischargeData()
 })
-
-const clearCategory = () => {
-  // kosongkan dan trigger filter
-  selectedCategory.value = "";
-  handleFilterChange();
-}
-
-const clearVendor = () => {
-  selectedVendor.value = "";
-  handleFilterChange();
-}
 
 
 </script>
@@ -238,7 +254,7 @@ const clearVendor = () => {
     <!--Header-->
     <div
       class="dashboard-header sticky top-0 z-10 bg-gradient-to-r from-white via-gray-50 to-white backdrop-blur-sm border border-gray-200/60 shadow-xl rounded-3xl p-6 mt-4">
-      <div class="flex flex-col lg:justify-between gap-6 w-full">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 w-full">
 
         <!-- Header Info Section -->
         <div class="flex items-center space-x-4">
@@ -251,118 +267,42 @@ const clearVendor = () => {
           </div>
           <div>
             <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-              Purchase Dashboard
+              Visit Dashboard
             </h3>
             <p class="text-gray-600 text-sm font-medium">Filter data based on selected period and criteria</p>
           </div>
         </div>
 
         <!-- Filter Controls Section -->
-        <div class="filter-controls">
-          <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-4 items-end justify-items-end">
-            <!-- Range Date -->
-            <div class="filter-group w-full col-span-2">
-              <label class="block text-xs font-semibold text-gray-700 mb-0 uppercase tracking-wide me-2">Range
-                Date:</label>
-              <div class="booking-bar col-span-2">
-                <ClientOnly>
-                  <VDatePicker v-model.range="filterRange" color="green" trim-weeks show-weeknumbers
-                    :first-day-of-week="2">
-                    <template #default="{ inputValue, inputEvents }">
-                      <div class="booking-bar-inputs">
-                        <VControl icon="lucide:calendar">
-                          <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+        <div class="filter-controls ml-auto">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-end justify-items-end">
+            <div class="booking-bar col-span-2">
+              <ClientOnly>
+                <label class="block text-xs font-semibold text-gray-700 mb-0 uppercase tracking-wide me-2">Range
+                  Date:</label>
+                <VDatePicker v-model.range="filterRange" color="green" trim-weeks show-weeknumbers
+                  :first-day-of-week="2">
+                  <template #default="{ inputValue, inputEvents }">
+                    <div class="booking-bar-inputs">
+                      <VControl icon="lucide:calendar">
+                        <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
                            focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
                            hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="Start"
-                            :value="inputValue.start" v-on="inputEvents.start">
-                        </VControl>
-                        <VControl icon="lucide:calendar">
-                          <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                          :value="inputValue.start" v-on="inputEvents.start">
+                      </VControl>
+                      <VControl icon="lucide:calendar">
+                        <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
                            focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
                            hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="End"
-                            :value="inputValue.end" v-on="inputEvents.end">
-                        </VControl>
-                      </div>
-                    </template>
-                  </VDatePicker>
-                </ClientOnly>
-              </div>
+                          :value="inputValue.end" v-on="inputEvents.end">
+                      </VControl>
+                    </div>
+                  </template>
+                </VDatePicker>
+              </ClientOnly>
             </div>
-            <!-- Category -->
-            <div class="filter-group w-full col-span-1">
-              <div class="flex items-center justify-between mb-2">
-                <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                  Category
-                </label>
-              </div>
-
-              <div class="relative">
-                <select v-model="selectedCategory" class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-             focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
-             hover:border-gray-300 appearance-none cursor-pointer shadow-sm" @change="handleFilterChange">
-                  <!-- placeholder / pilih semua -->
-                  <option value="">All categories</option>
-                  <option v-for="category in categories" :key="category.category_code" :value="category.category_code">
-                    {{ category.category_name }}
-                  </option>
-                </select>
-
-                <!-- Tombol X di dalam input -->
-                <button v-if="selectedCategory" type="button" @click="clearCategory" aria-label="Clear category"
-                  class="absolute inset-y-0 right-7 flex items-center px-2 text-gray-400 hover:text-gray-600 focus:outline-none">
-                  <!-- icon X -->
-                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-
-                <!-- caret -->
-                <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
-                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <!-- Vendor -->
-            <div class="filter-group w-full col-span-1">
-              <div class="flex items-center justify-between mb-2">
-                <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                  Vendor
-                </label>
-              </div>
-
-              <div class="relative">
-                <select v-model="selectedVendor" class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-             focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
-             hover:border-gray-300 appearance-none cursor-pointer shadow-sm" @change="handleFilterChange">
-                  <option value="">All vendors</option>
-                  <option v-for="vendor in vendors" :key="vendor.vendor_code" :value="vendor.vendor_code">
-                    {{ vendor.vendor_name }}
-                  </option>
-                </select>
-
-                <!-- Tombol X di dalam input -->
-                <button v-if="selectedVendor" type="button" @click="clearVendor" aria-label="Clear category"
-                  class="absolute inset-y-0 right-7 flex items-center px-2 text-gray-400 hover:text-gray-600 focus:outline-none">
-                  <!-- icon X -->
-                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-
-                <!-- caret -->
-                <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
-                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-
             <!-- Apply Filter Button -->
-            <div class="filter-group w-full col-span-1">
+            <div class="filter-group w-full">
               <button @click="applyFilter" class="w-full px-6 py-3 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 
                          text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 
                          transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-orange-200 
@@ -379,26 +319,24 @@ const clearVendor = () => {
       </div>
     </div>
 
-    <PurchaseSummaryDashboard :summary="summary" :isFetching="isFetchingSummary" />
+    <VisitSummaryDashboard :summary="summary" :isFetching="isFetchingSummary" />
 
-    <RevenueTrendPurchaseDashboard :items="revenueTrend" :isFetching="isFetchingTrend" />
+    <VisitTrendDashboard :items="revenueTrend" :isFetching="isFetchingTrend" />
 
-    <div class="w-full mb-4">
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div class="col-span-1">
-          <TopVendorPurchaseDashboard :items="topVendor" :isFetching="isFetchingTopVendor" :limit=10 />
-        </div>
+    <TopServiceVisitDashboard :items="TopService" :isFetching="isFetchingTopService" :limit=10 />
+    
+    <TopGuarantorVisitDashboard :items="TopGuarantor" :isFetching="isFetchingTopGuarantor" :limit=10 />
+    
+    <VisitByDayOfWeekDashboard :items="visitByDayOfWeek" :isFetching="isFetchingvisitByDayOfWeek" />
 
-        <div class="col-span-1">
-          <TopProductPurchaseDashboard :items="TopProduct" :isFetching="isFetchingTopProduct" :limit=10 />
-        </div>
-      </div>
-    </div>
-
-
-    <PurchaseByCategoryDashboard :items="revenueByCategory" :isFetching="isFetchingRevenueByCategory" />
+    <VisitByRegionDashboard :items="visitByRegion" :isFetching="isFetchingvisitByRegion" :limit=10 />
+    
+    <VisitIPOPDashboard :items="visitIPOP" :isFetching="isFetchingvisitIPOP" />
+    
+    <VisitLOSBucketDischargeDashboard :items="visitLOSBucketDischarge" :isFetching="isFetchingVisitLOSBucketDischarge" />
   </div>
 </template>
+
 
 <style lang="scss">
 @import '/@src/scss/abstracts/all';

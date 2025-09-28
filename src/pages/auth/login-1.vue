@@ -1,10 +1,4 @@
 <script setup lang="ts">
-import { log } from 'console';
-import { on } from 'events';
-import GoogleLoginBtn from '../components/button/GoogleLoginBtn.vue'
-import { handleGoogleLoginResponse } from '../components/button/handleGoogleLoginResponse.js';
-import { useFirebaseToken } from '/@src/stores/firebase-token';
-
 type StepId = 'login' | 'forgot-password'
 const step = ref<StepId>('login')
 const isLoading = ref(false)
@@ -12,69 +6,33 @@ const router = useRouter()
 const route = useRoute()
 const notyf = useNotyf()
 const token = useUserToken()
-const useApi = useApiFetchV2()
 const redirect = route.query.redirect as string
-const userSession = useUserSession()
-// const firebaseToken = useFirebaseToken()
-const toaster = useToaster()
-
-// Data
-const input = ref({
-  email: '',
-  password: '',
-})
 
 const handleLogin = async () => {
   if (!isLoading.value) {
     isLoading.value = true
 
-    // melakukan request login
-    const data = input.value
-    await useApi.post('/auth/admins/login', data, false).then(async (response) => {
-      token.value = response.result.token
-      toaster.success('Login success')
-    }).catch((error) => {
-      toaster.error(error?.data?.meta?.message || 'Failed to login')
-    }).finally(() => {
-      isLoading.value = false
-    })
+    await sleep(2000)
+    console.log('set token logged-in')
+    token.value = 'logged-in'
 
-    if (token.value && !userSession.user) {
-      const response = await useApi.get('/profile/admins/user', undefined, false)
-      userSession.setUser(response.result)
+    notyf.dismissAll()
+    notyf.primary('Welcome back, Erik Kovalsky')
 
-      // if (userSession.isLoggedIn) {
-      //   await useApi.put("/update-device-token", {
-      //     email: user.result.email,
-      //     fcm_token: firebaseToken.token,
-      //   }, false);
-      // }
-
-      // menambahkan data module app
-      if (redirect) {
-        router.push(redirect)
-      } else {
-        router.push('/admins')
-      }
+    if (redirect) {
+      router.push(redirect)
     }
+    else {
+      router.push('/sidebar/dashboards')
+    }
+
+    isLoading.value = false
   }
 }
 
-onMounted(() => {
-  // handleGoogleLoginResponse();
-  if (token.value) {
-    router.push('/admins')
-  }
-})
-
-import config from '/@src/config.ts';
-
-const title = config.site_title;
-
 useHead({
-  title: title,
+  title: 'Auth Login 1 - Vuero',
 })
-
 </script>
 
 <template>
@@ -88,7 +46,11 @@ useHead({
             <div class="container">
               <div class="columns">
                 <div class="column">
-                  <img class="hero-image" src="/images/illustrations/login/station.svg" alt="">
+                  <img
+                    class="hero-image"
+                    src="/images/illustrations/login/station.svg"
+                    alt=""
+                  >
                 </div>
               </div>
             </div>
@@ -97,30 +59,61 @@ useHead({
       </div>
       <div class="column is-4 is-relative">
         <div class="top-tools">
-          <RouterLink to="/" class="top-logo">
-            <AnimatedLogo width="64px" height="64px" />
+          <RouterLink
+            to="/"
+            class="top-logo"
+          >
+            <AnimatedLogo
+              width="38px"
+              height="38px"
+            />
           </RouterLink>
 
           <VDarkmodeToggle />
         </div>
         <div class="is-form">
           <div class="is-form-inner">
-            <div class="form-text" :class="[step !== 'login' && 'is-hidden']">
+            <div
+              class="form-text"
+              :class="[step !== 'login' && 'is-hidden']"
+            >
               <h2>Sign In</h2>
               <p>Welcome back to your account.</p>
             </div>
-            <div class="form-text" :class="[step === 'login' && 'is-hidden']">
+            <div
+              class="form-text"
+              :class="[step === 'login' && 'is-hidden']"
+            >
               <h2>Recover Account</h2>
               <p>Reset your account password.</p>
             </div>
-            <form method="post" novalidate :class="[step !== 'login' && 'is-hidden']" class="login-wrapper"
-              @submit.prevent="handleLogin">
+            <form
+              method="post"
+              novalidate
+              :class="[step !== 'login' && 'is-hidden']"
+              class="login-wrapper"
+              @submit.prevent="handleLogin"
+            >
+              <VMessage color="primary">
+                <div>
+                  <strong class="pr-1">email:</strong>
+                  <span>john.doe@cssninja.io</span>
+                </div>
+                <div>
+                  <strong class="pr-1">password:</strong>
+                  <span>ada.lovelace</span>
+                </div>
+              </VMessage>
+
               <VField>
                 <VControl icon="lnil lnil-envelope autv-icon">
                   <VLabel class="auth-label">
                     Email Address
                   </VLabel>
-                  <VInput type="email" v-model="input.email" autocomplete="current-password" />
+                  <VInput
+                    type="email"
+                    autocomplete="current-password"
+                  />
                 </VControl>
               </VField>
               <VField>
@@ -128,69 +121,82 @@ useHead({
                   <VLabel class="auth-label">
                     Password
                   </VLabel>
-                  <VInput type="password" v-model="input.password" autocomplete="current-password" />
+                  <VInput
+                    type="password"
+                    autocomplete="current-password"
+                  />
                 </VControl>
               </VField>
 
               <VField>
                 <VControl class="is-flex">
-                  <!-- Remember Me -->
-                  <!-- <VLabel raw class="remember-toggle">
-                    <VInput raw type="checkbox" />
+                  <VLabel
+                    raw
+                    class="remember-toggle"
+                  >
+                    <VInput
+                      raw
+                      type="checkbox"
+                    />
 
                     <span class="toggler">
                       <span class="active">
-                        <VIcon icon="lucide:check" />
+                        <VIcon
+                          icon="lucide:check"
+                        />
                       </span>
                       <span class="inactive">
-                        <VIcon icon="lucide:circle" />
+                        <VIcon
+                          icon="lucide:circle"
+                        />
                       </span>
                     </span>
                   </VLabel>
-                  <VLabel raw class="remember-me">
+                  <VLabel
+                    raw
+                    class="remember-me"
+                  >
                     Remember Me
-                  </VLabel> -->
-
-                  <a tabindex="0" role="button" @keydown.enter.prevent="step = 'forgot-password'"
-                    @click="step = 'forgot-password'">
+                  </VLabel>
+                  <a
+                    tabindex="0"
+                    role="button"
+                    @keydown.enter.prevent="step = 'forgot-password'"
+                    @click="step = 'forgot-password'"
+                  >
                     Forgot Password?
                   </a>
                 </VControl>
               </VField>
 
               <div class="button-wrap has-help">
-                <VButton :style="'width: 100%'" id="login-button" :loading="isLoading" color="primary" type="submit" size="big" rounded raised
-                bold>
-                Confirm
-              </VButton>
-              <!-- Register -->
-                <!-- <span>
-                  don't have an account yet ?
+                <VButton
+                  id="login-button"
+                  :loading="isLoading"
+                  color="primary"
+                  type="submit"
+                  size="big"
+                  rounded
+                  raised
+                  bold
+                >
+                  Confirm
+                </VButton>
+                <span>
+                  Or
                   <RouterLink to="/auth/signup-1">Create</RouterLink>
-                </span> -->
+                  an account.
+                </span>
               </div>
-
-              <!-- Login Google -->
-              <!-- <div class="columns is-vcentered is-mobile separator-container">
-                <div class="column">
-                  <hr class="separator-line">
-                </div>
-                <div class="column is-narrow">
-                  <span class="has-text-grey separator-text">Or</span>
-                </div>
-                <div class="column">
-                  <hr class="separator-line">
-                </div>
-              </div>
-
-              <div>
-                <GoogleLoginBtn />
-              </div> -->
-
             </form>
 
-            <form method="post" novalidate :class="[step !== 'forgot-password' && 'is-hidden']" class="login-wrapper"
-              @submit.prevent>
+            <form
+              method="post"
+              novalidate
+              :class="[step !== 'forgot-password' && 'is-hidden']"
+              class="login-wrapper"
+              @submit.prevent
+            >
               <p class="recover-text">
                 Enter your email and click on the confirm button to reset your password.
                 We'll send you an email detailing the steps to complete the procedure.
@@ -201,14 +207,31 @@ useHead({
                   <VLabel class="auth-label">
                     Email Address
                   </VLabel>
-                  <VInput type="email" autocomplete="current-password" />
+                  <VInput
+                    type="email"
+                    autocomplete="current-password"
+                  />
                 </VControl>
               </VField>
               <div class="button-wrap">
-                <VButton color="white" size="big" lower rounded @click="step = 'login'">
+                <VButton
+                  color="white"
+                  size="big"
+                  lower
+                  rounded
+                  @click="step = 'login'"
+                >
                   Cancel
                 </VButton>
-                <VButton color="primary" size="big" type="submit" lower rounded solid @click="step = 'login'" >
+                <VButton
+                  color="primary"
+                  size="big"
+                  type="submit"
+                  lower
+                  rounded
+                  solid
+                  @click="step = 'login'"
+                >
                   Confirm
                 </VButton>
               </div>
@@ -221,39 +244,6 @@ useHead({
 </template>
 
 <style lang="scss" scoped>
-// login with
-.separator-line {
-  height: 0.5px;
-  background-color: #e0e0e0;
-  border: none;
-  margin: 0;
-}
-
-.separator-container {
-  margin-top: -15px;
-}
-
-.separator-text {
-  margin: 0 5px;
-  line-height: 1;
-}
-
-.google-button {
-  border: 1px solid #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 8px 16px;
-}
-
-.google-button .icon img {
-  width: 20px;
-  height: 20px;
-}
-
-// end login with
-
 .modern-login {
   position: relative;
   background: var(--white);
@@ -315,7 +305,7 @@ useHead({
       img {
         display: block;
         width: 100%;
-        max-width: 180px;
+        max-width: 50px;
         margin: 0 auto;
       }
 
@@ -390,8 +380,8 @@ useHead({
             background: color-mix(in oklab, var(--fade-grey), white 6%);
             border-color: var(--placeholder);
 
-            ~.auth-label,
-            ~.autv-icon .iconify {
+            ~ .auth-label,
+            ~ .autv-icon .iconify {
               color: var(--muted-grey);
             }
           }
@@ -536,7 +526,7 @@ useHead({
           display: flex;
           align-items: center;
 
-          >span {
+          > span {
             margin-inline-start: 12px;
             font-family: var(--font);
 
@@ -578,7 +568,7 @@ useHead({
     opacity: 0;
     cursor: pointer;
 
-    &:checked~.toggler {
+    &:checked ~ .toggler {
       border-color: var(--primary);
 
       .active,
@@ -617,7 +607,8 @@ useHead({
       display: flex;
       justify-content: center;
       align-items: center;
-      transform: translateX(calc(var(--transform-direction) * 0)) rotate(calc(var(--transform-direction) * 0));
+      transform: translateX(calc(var(--transform-direction) * 0))
+        rotate(calc(var(--transform-direction) * 0));
       transition: all 0.3s ease;
 
       .iconify {
@@ -642,7 +633,7 @@ useHead({
   }
 }
 
-@media only screen and (width <=767px) {
+@media only screen and (width <= 767px) {
   .modern-login {
     .top-logo {
       top: 30px;
@@ -659,7 +650,7 @@ useHead({
   }
 }
 
-@media only screen and (width >=768px) and (width <=1024px) and (orientation: portrait) {
+@media only screen and (width >= 768px) and (width <= 1024px) and (orientation: portrait) {
   .modern-login {
     .top-logo {
       .iconify {
@@ -678,7 +669,6 @@ useHead({
       height: 100vh;
     }
   }
-
 }
 
 /* ==========================================================================
@@ -718,7 +708,7 @@ Dark mode
             &:focus {
               border-color: var(--primary);
 
-              ~.autv-icon {
+              ~ .autv-icon {
                 .iconify {
                   color: var(--primary);
                 }
@@ -748,10 +738,10 @@ Dark mode
 
   .remember-toggle {
     input {
-      &:checked+.toggler {
+      &:checked + .toggler {
         border-color: var(--primary);
 
-        >span {
+        > span {
           background: var(--primary);
         }
       }
@@ -760,7 +750,7 @@ Dark mode
     .toggler {
       border-color: color-mix(in oklab, var(--dark-sidebar), white 12%);
 
-      >span {
+      > span {
         background: color-mix(in oklab, var(--dark-sidebar), white 12%);
       }
     }

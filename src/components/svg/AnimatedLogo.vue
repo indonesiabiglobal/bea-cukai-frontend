@@ -19,7 +19,7 @@ if (!import.meta.env.SSR) {
 </script>
 
 <template>
-  <img src="/images/logos/logo/logo.png" alt="Logo" />
+  <img src="/images/logos/logo/fki.png" alt="Logo" />
 </template>
 
 <style lang="scss" scoped>

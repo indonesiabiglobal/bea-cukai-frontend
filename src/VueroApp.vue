@@ -202,10 +202,29 @@ const useApi = useApiFetchV2()
 //     })
 // }
 
+const route = useRoute()
+const isAuthRoute = ref(false)
+
+watchEffect(() => {
+  isAuthRoute.value = route?.fullPath?.startsWith?.('/auth')
+})
+
 </script>
 
 <template>
-  <AdminLayout>
+  <div v-if="isAuthRoute" >
+    <ConfirmDialog></ConfirmDialog>
+    <Toast />
+    <Suspense>
+      <RouterView v-slot="{ Component }">
+        <Transition name="fade-slow" mode="out-in">
+          <component :is="Component" />
+        </Transition>
+      </RouterView>
+    </Suspense>
+    <Toast position="top-right" group="tr" />
+  </div>
+  <AdminLayout v-else>
     <ConfirmDialog />
     <Toast />
     <Suspense>

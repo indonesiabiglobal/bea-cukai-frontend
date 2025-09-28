@@ -1,45 +1,16 @@
 <script setup lang="ts">
+import { availableMenus } from '../data/apps/menu'
 import type { SideblockItem } from '/@src/components/layouts/sideblock/sideblock.types'
-import { inject } from 'vue'
+import { inject, ref } from 'vue'
 
 // Inject the tab management function
 const addTabByPath = inject<(path: string) => void>('addTabByPath')
 
-// Dashboard menu items with their corresponding paths
-const dashboardItems = [
-  {
-    path: '/dashboard/patient',
-    label: 'Patient',
-    icon: 'lnil lnil-user',
-  },
-  {
-    path: '/dashboard/income',
-    label: 'Income', 
-    icon: 'lnil lnil-suitcase',
-  },
-  {
-    path: '/dashboard/purchasing',
-    label: 'Purchasing',
-    icon: 'lnil lnil-dropbox',
-  },
-  {
-    path: '/dashboard/sale',
-    label: 'Sale',
-    icon: 'lnil lnil-medicine',
-  },
-  {
-    path: '/dashboard/visit',
-    label: 'Visit',
-    icon: 'lnil lnil-hospital-location',
-  },
-  {
-    path: '/examples/tailwind-priority',
-    label: 'Tailwind Priority Example',
-    icon: 'lnil lnil-grid-alt',
-  },
-]
+const reportItems = availableMenus.filter(menu => menu.groupMenu === 'Report')
+const dataMasterItems = availableMenus.filter(menu => menu.groupMenu === 'Data Master')
+const auxiliaryMaterialsItems = availableMenus.filter(menu => menu.groupMenu === 'Auxiliary Materials')
 
-// Function to handle dashboard navigation via tabs
+// Function to handle navigation via tabs
 const handleDashboardClick = (path: string) => {
   if (addTabByPath) {
     addTabByPath(path)
@@ -49,10 +20,37 @@ const handleDashboardClick = (path: string) => {
 const links = ref<SideblockItem[]>([
   {
     type: 'collapse',
-    label: 'Dashboard',
-    id: 'dashboard',
+    label: 'Laporan',
+    id: 'report',
+    group: 'tab',
     icon: 'mdi:hospital-building',
-    children: dashboardItems.map(item => ({
+    children: reportItems.map(item => ({
+      to: item.path,
+      label: item.label,
+      icon: item.icon,
+      onClick: () => handleDashboardClick(item.path)
+    })),
+  },
+  {
+    type: 'collapse',
+    label: 'Data Master',
+    id: 'data-master',
+    group: 'tab',
+    icon: 'mdi:database',
+    children: dataMasterItems.map(item => ({
+      to: item.path,
+      label: item.label,
+      icon: item.icon,
+      onClick: () => handleDashboardClick(item.path)
+    })),
+  },
+  {
+    type: 'collapse',
+    label: 'Bahan Penolong',
+    id: 'auxiliary-materials',
+    group: 'tab',
+    icon: 'mdi:folder',
+    children: auxiliaryMaterialsItems.map(item => ({
       to: item.path,
       label: item.label,
       icon: item.icon,

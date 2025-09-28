@@ -7,6 +7,7 @@ export interface SideblockItemCollapse {
   icon: string
   hideMobile?: boolean
   label?: string
+  group?: string
 
   children: {
     label: string

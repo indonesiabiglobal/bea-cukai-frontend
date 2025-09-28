@@ -17,9 +17,9 @@ export const useUserSession = defineStore('userSession', () => {
     token.value = undefined
     user.value = undefined
 
-    // menghapus data module app
-    const moduleAppSession = useModuleAppSession()
-    moduleAppSession.destoryModuleApp()
+    // // menghapus data module app
+    // const moduleAppSession = useModuleAppSession()
+    // moduleAppSession.destoryModuleApp()
   }
 
   return {

@@ -23,11 +23,11 @@ const props = withDefaults(defineProps<{
   margin: 0 auto;
 
   &.is-size-default {
-    padding-bottom: 100px;
+    padding-bottom: 24px;
   }
 
   &.is-size-large {
-    padding-bottom: 100px;
+    padding-bottom: 24px;
   }
 
   &.is-size-wide {

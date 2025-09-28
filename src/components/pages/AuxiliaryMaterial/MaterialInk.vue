@@ -15,7 +15,8 @@ const filterRange = ref({
   start: route.query.start_date ? dayjs(route.query.start_date as string || new Date()).toDate() : dayjs().startOf('month').toDate(),
   end: route.query.end_date ? dayjs(route.query.end_date as string || new Date()).toDate() : dayjs().endOf('month').toDate(),
 })
-const selectedCategory = ref("")
+const itemCode = ref("")
+const itemName = ref("")
 
 let debounceTimer: any;
 watch(
@@ -34,144 +35,122 @@ watch(
   },
   { deep: true }
 );
-/**
- * Category Data
- */
-const isFetchingCategory = ref(false);
-const categories: any = ref<ProductCategory>({
-  category_code: '',
-  category_name: '',
-  product_count: 0,
-});
-
-const categoryData = async () => {
-  isFetchingCategory.value = true;
-  await useApi.get('products/categories', {}, false).then((res: any) => {
-    categories.value = res.data
-  }).catch((err: any) => {
-    console.log(err)
-  }).finally(() => {
-    isFetchingCategory.value = false;
-  });
-};
 
 /**
- * Summary Data
+ * Ink Materials Data
  */
-const isFetchingSummary = ref(false);
-const summary: any = ref<SaleSummary>({
-  total_qty: 0,
-  total_subtotal: 0,
-  unique_items: 0,
-  tx_count: 0,
-});
+const isFetchingReport = ref(false);
+const inkMaterials = ref<InkMaterials[]>([]);
+const page = ref(1)
+const limit = ref(10)
+const total = ref(0)
+const hasNext = ref(false)
+const hasPrev = ref(false)
+const totalPages = ref(1)
 
-const summaryData = async () => {
-  isFetchingSummary.value = true;
-  await useApi.get('dashboard/sales/summary', {
+const inkMaterialsData = async () => {
+  isFetchingReport.value = true;
+  await useApi.get('auxiliary-material', {
+    page: page.value,
+    limit: limit.value,
     from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
     to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
-    category: selectedCategory.value || '',
+    item_code: itemCode.value || '',
+    item_name: itemName.value || '',
+    lap: 'Ink'
   }, false).then((res: any) => {
-    summary.value = res.data
+    // Map API response to InkMaterials type
+    const mappedData = res.data.map((item: any): InkMaterials => ({
+      akhir: item.akhir || 0,
+      awal: item.awal || 0,
+      item_code: item.item_code || '',
+      item_group: item.item_group || '',
+      item_name: item.item_name || '',
+      item_type_code: item.item_type_code || '',
+      keluar: item.keluar || 0,
+      location_code: item.location_code || '',
+      masuk: item.masuk || 0,
+      opname: item.opname || 0,
+      peny: item.peny || 0,
+      selisih: item.selisih || 0,
+      unit_code: item.unit_code || '',
+    }));
+
+    inkMaterials.value = mappedData;
+
+    // Handle meta and pagination info
+    if (res.meta && res.meta.pagination) {
+      total.value = res.meta.pagination.totalCount || 0;
+      hasNext.value = res.meta.pagination.hasNext || false;
+      hasPrev.value = res.meta.pagination.hasPrev || false;
+      totalPages.value = res.meta.pagination.totalPages || 1;
+      // Update current page if different from response
+      if (res.meta.pagination.page && res.meta.pagination.page !== page.value) {
+        page.value = res.meta.pagination.page;
+      }
+    } else if (res.total !== undefined) {
+      total.value = res.total;
+      // Fallback calculations for hasNext/hasPrev
+      hasNext.value = page.value * limit.value < total.value;
+      hasPrev.value = page.value > 1;
+      totalPages.value = Math.max(1, Math.ceil(total.value / limit.value));
+    } else if (res.pagination && res.pagination.total) {
+      total.value = res.pagination.total;
+      hasNext.value = res.pagination.hasNext || false;
+      hasPrev.value = res.pagination.hasPrev || false;
+      totalPages.value = res.pagination.totalPages || 1;
+    } else {
+      // Fallback: estimate total based on current page and data length
+      total.value = (page.value - 1) * limit.value + mappedData.length;
+      hasNext.value = mappedData.length === limit.value;
+      hasPrev.value = page.value > 1;
+      totalPages.value = Math.max(1, Math.ceil(total.value / limit.value));
+    }
   }).catch((err: any) => {
     console.log(err)
+    inkMaterials.value = [];
+    total.value = 0;
+    hasNext.value = false;
+    hasPrev.value = false;
+    totalPages.value = 1;
   }).finally(() => {
-    isFetchingSummary.value = false;
+    isFetchingReport.value = false;
   });
 };
 
-/**
- * Revenue Trend
- */
-const isFetchingTrend = ref(false);
-const revenueTrend: any = ref<SaleRevenueTrend[]>([]);
-
-const trendData = async () => {
-  isFetchingTrend.value = true;
-  await useApi.get('dashboard/sales/trend', {
-    from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
-    to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
-    category: selectedCategory.value || '',
-  }, false).then((res: any) => {
-    revenueTrend.value = res.data
-  }).catch((err: any) => {
-    console.log(err)
-  }).finally(() => {
-    isFetchingTrend.value = false;
-  });
-};
-
-/**
- * Top Product
- */
-const isFetchingTopProduct = ref(false);
-const TopProduct = ref<TopProductSale[]>([]);
-
-const topProductData = async () => {
-  isFetchingTopProduct.value = true;
-  await useApi.get('dashboard/sales/top-products', {
-    from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
-    to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
-    category: selectedCategory.value || '',
-  }, false).then((res: any) => {
-    TopProduct.value = res.data
-  }).catch((err: any) => {
-    console.log(err)
-  }).finally(() => {
-    isFetchingTopProduct.value = false;
-  });
-};
-
-/**
- * Revenue By Category
- */
-const isFetchingRevenueByCategory = ref(false);
-const revenueByCategory = ref<SaleByCategory[]>([]);
-
-const saleByCategoryData = async () => {
-  isFetchingRevenueByCategory.value = true;
-  await useApi.get('dashboard/sales/by-category', {
-    from: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
-    to: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
-    category: selectedCategory.value || '',
-  }, false).then((res: any) => {
-    revenueByCategory.value = res.data
-  }).catch((err: any) => {
-    console.log(err)
-  }).finally(() => {
-    isFetchingRevenueByCategory.value = false;
-  });
-};
 // Filter functions
 const handleFilterChange = () => {
-  summaryData();
-  trendData();
-  topProductData();
-  saleByCategoryData();
+  page.value = 1; // Reset to first page when filter changes
+  inkMaterialsData();
+}
+function handleChangePage(p: number) {
+  page.value = p
+  inkMaterialsData()
+}
+function handleChangeLimit(l: number) {
+  limit.value = l
+  page.value = 1 // Reset to first page when limit changes
+  inkMaterialsData()
 }
 
 const applyFilter = () => {
-  summaryData();
-  trendData();
-  topProductData();
-  saleByCategoryData();
+  page.value = 1; // Reset to first page when applying filter
+  inkMaterialsData();
 }
 
 onMounted(() => {
-  summaryData()
-  trendData()
-  topProductData()
-  saleByCategoryData()
-  categoryData()
+  inkMaterialsData()
 })
 
-function clearCategory() {
-  // kosongkan dan trigger filter
-  selectedCategory.value = "";
+const clearItemCode = () => {
+  itemCode.value = "";
   handleFilterChange();
 }
 
+const clearItemName = () => {
+  itemName.value = "";
+  handleFilterChange();
+}
 </script>
 
 <template>
@@ -179,96 +158,111 @@ function clearCategory() {
     <!--Header-->
     <div
       class="dashboard-header sticky top-0 z-10 bg-gradient-to-r from-white via-gray-50 to-white backdrop-blur-sm border border-gray-200/60 shadow-xl rounded-3xl p-6 mt-4">
-      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 w-full">
+      <div class="flex flex-col lg:justify-between gap-6 w-full">
 
         <!-- Header Info Section -->
         <div class="flex items-center space-x-4">
-          <div class="p-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-lg">
+          <div class="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg">
             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4">
               </path>
             </svg>
           </div>
           <div>
             <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-              Sale Dashboard
+                Laporan Pertanggung Jawaban Mutasi Bahan Penolong (Ink)
             </h3>
-            <p class="text-gray-600 text-sm font-medium">Filter data based on selected period and criteria</p>
+            <p class="text-gray-600 text-sm font-medium">Filter data berdasarkan periode dan kriteria yang dipilih</p>
           </div>
         </div>
-
         <!-- Filter Controls Section -->
-        <div class="filter-controls ml-auto">
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end justify-items-end">
-            <div class="filter-group w-full col-span-2">
-              <label class="block text-xs font-semibold text-gray-700 mb-0 uppercase tracking-wide me-2">Range
-                Date:</label>
-              <div class="booking-bar col-span-2">
-                <ClientOnly>
-                  <VDatePicker v-model.range="filterRange" color="green" trim-weeks show-weeknumbers
-                    :first-day-of-week="2">
-                    <template #default="{ inputValue, inputEvents }">
-                      <div class="booking-bar-inputs">
-                        <VControl icon="lucide:calendar">
-                          <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-                           focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
-                           hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="Start"
-                            :value="inputValue.start" v-on="inputEvents.start">
-                        </VControl>
-                        <VControl icon="lucide:calendar">
-                          <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-                           focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
-                           hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="End"
-                            :value="inputValue.end" v-on="inputEvents.end">
-                        </VControl>
-                      </div>
-                    </template>
-                  </VDatePicker>
-                </ClientOnly>
-              </div>
-            </div>
-            <div class="filter-group w-full col-span-1">
-              <div class="flex items-center justify-between mb-2">
-                <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
-                  Category
-                </label>
+        <div class="filter-controls">
+          <div class="relative w-full">
+            <div
+              class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 items-end justify-items-end">
+              <!-- Range Date -->
+              <div class="filter-group w-full col-span-2">
+                <label class="block text-xs font-semibold text-gray-700 mb-0 uppercase tracking-wide me-2">Range
+                  Date:</label>
+                <div class="booking-bar col-span-2">
+                  <ClientOnly>
+                    <VDatePicker v-model.range="filterRange" color="purple" trim-weeks show-weeknumbers
+                      :first-day-of-week="2">
+                      <template #default="{ inputValue, inputEvents }">
+                        <div class="booking-bar-inputs">
+                          <VControl icon="lucide:calendar">
+                            <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                             focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
+                             hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="Start"
+                              :value="inputValue.start" v-on="inputEvents.start">
+                          </VControl>
+                          <VControl icon="lucide:calendar">
+                            <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                             focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
+                             hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="End"
+                              :value="inputValue.end" v-on="inputEvents.end">
+                          </VControl>
+                        </div>
+                      </template>
+                    </VDatePicker>
+                  </ClientOnly>
+                </div>
               </div>
 
-              <div class="relative">
-                <select v-model="selectedCategory" class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-             focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
-             hover:border-gray-300 appearance-none cursor-pointer shadow-sm" @change="handleFilterChange">
-                  <!-- placeholder / pilih semua -->
-                  <option value="">All categories</option>
-                  <option v-for="category in categories" :key="category.category_code" :value="category.category_code">
-                    {{ category.category_name }}
-                  </option>
-                </select>
+              <!-- Kode Item -->
+              <div class="filter-group w-full col-span-1">
+                <div class="flex items-center justify-between mb-2">
+                  <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Kode Item
+                  </label>
+                </div>
 
-                <!-- Tombol X di dalam input -->
-                <button v-if="selectedCategory" type="button" @click="clearCategory" aria-label="Clear category"
-                  class="absolute inset-y-0 right-7 flex items-center px-2 text-gray-400 hover:text-gray-600 focus:outline-none">
-                  <!-- icon X -->
-                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+                <div class="relative">
+                  <input type="text" v-model="itemCode" @input="handleFilterChange"
+                    placeholder="Masukkan Kode Item" class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                           focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
+                           hover:border-gray-300 appearance-none cursor-text shadow-sm" aria-label="Kode Item" />
 
-                <!-- caret -->
-                <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none">
-                  <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                  </svg>
+                  <!-- Tombol X di dalam input -->
+                  <button v-if="itemCode" type="button" @click="clearItemCode" aria-label="Clear itemCode"
+                    class="absolute inset-y-0 right-7 flex items-center px-2 text-gray-400 hover:text-gray-600 focus:outline-none">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Nama Item -->
+              <div class="filter-group w-full col-span-1">
+                <div class="flex items-center justify-between mb-2">
+                  <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                    Nama Item
+                  </label>
+                </div>
+
+                <div class="relative">
+                  <input type="text" v-model="itemName" @input="handleFilterChange"
+                    placeholder="Masukkan Nama Item" class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                           focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
+                           hover:border-gray-300 appearance-none cursor-text shadow-sm" aria-label="Nama Item" />
+
+                  <!-- Tombol X di dalam input -->
+                  <button v-if="itemName" type="button" @click="clearItemName" aria-label="Clear itemName"
+                    class="absolute inset-y-0 right-7 flex items-center px-2 text-gray-400 hover:text-gray-600 focus:outline-none">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
               </div>
             </div>
-            <!-- Apply Filter Button -->
-            <div class="filter-group w-full col-span-1">
-              <button @click="applyFilter" class="w-full px-6 py-3 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 
-                         text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 
-                         transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-orange-200 
-                         flex items-center justify-center space-x-2">
+            <div class="mt-3 flex justify-end">
+              <button @click="applyFilter"
+                class="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 
+                       text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 
+                       transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-purple-200 flex items-center justify-center space-x-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
@@ -280,17 +274,10 @@ function clearCategory() {
         </div>
       </div>
     </div>
-
-    <SaleSummaryDashboard :summary="summary" :isFetching="isFetchingSummary" />
-
-    <RevenueTrendSaleDashboard :items="revenueTrend" :isFetching="isFetchingTrend" />
-
-    <TopProductSaleDashboard :items="TopProduct" :isFetching="isFetchingTopProduct" :limit=10 />
-
-    <SaleByCategoryDashboard :items="revenueByCategory" :isFetching="isFetchingRevenueByCategory" />
+    <InkMaterialsTable :items="inkMaterials" :isFetching="isFetchingReport" :page="page" :limit="limit"
+      :total="total" :hasNext="hasNext" :hasPrev="hasPrev" :totalPages="totalPages" @change-page="handleChangePage" @change-limit="handleChangeLimit" />
   </div>
 </template>
-
 
 <style lang="scss">
 @import '/@src/scss/abstracts/all';

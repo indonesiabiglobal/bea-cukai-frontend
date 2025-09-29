@@ -1,0 +1,177 @@
+/* Simplified Tailwind CSS for Bulma integration */
+
+/* Basic utility classes without @layer to avoid conflicts */
+
+/* Display utilities */
+.tw-block { display: block !important; }
+.tw-flex { display: flex !important; }
+.tw-grid { display: grid !important; }
+.tw-hidden { display: none !important; }
+.tw-inline { display: inline !important; }
+.tw-inline-block { display: inline-block !important; }
+
+/* Flexbox utilities */
+.tw-flex-col { flex-direction: column !important; }
+.tw-flex-row { flex-direction: row !important; }
+.tw-justify-center { justify-content: center !important; }
+.tw-justify-between { justify-content: space-between !important; }
+.tw-items-center { align-items: center !important; }
+
+/* Spacing utilities */
+.tw-p-0 { padding: 0 !important; }
+.tw-m-0 { margin: 0 !important; }
+.tw-p-4 { padding: 1rem !important; }
+.tw-p-6 { padding: 1.5rem !important; }
+.tw-m-4 { margin: 1rem !important; }
+
+/* Text utilities */
+.tw-text-center { text-align: center !important; }
+.tw-text-left { text-align: left !important; }
+.tw-text-right { text-align: right !important; }
+.tw-font-medium { font-weight: 500 !important; }
+.tw-font-semibold { font-weight: 600 !important; }
+.tw-font-bold { font-weight: 700 !important; }
+
+/* Color utilities with project variables */
+.tw-text-primary { color: var(--primary) !important; }
+.tw-text-dark { color: var(--dark-text) !important; }
+.tw-text-light { color: var(--light-text) !important; }
+.tw-bg-primary { background-color: var(--primary) !important; }
+.tw-bg-white { background-color: var(--white) !important; }
+
+/* Border and radius utilities */
+.tw-rounded { border-radius: 0.25rem !important; }
+.tw-rounded-lg { border-radius: 0.5rem !important; }
+.tw-border { border-width: 1px !important; }
+.tw-border-0 { border-width: 0 !important; }
+
+/* Width and height utilities */
+.tw-w-full { width: 100% !important; }
+.tw-h-full { height: 100% !important; }
+.tw-w-auto { width: auto !important; }
+.tw-h-auto { height: auto !important; }
+
+/* Custom components */
+.card-tailwind {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  padding: 1.5rem;
+}
+
+.card-hover-tailwind {
+  transition: box-shadow 0.3s ease;
+}
+
+.card-hover-tailwind:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Button components */
+.btn-primary-tailwind {
+  background-color: var(--primary);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.btn-secondary-tailwind {
+  background-color: #e5e7eb;
+  color: #374151;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+/* Form components */
+.input-tailwind {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+}
+
+.input-tailwind:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary);
+  border-color: transparent;
+}
+
+/* Layout utilities for dashboard */
+.dashboard-grid-tailwind {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .dashboard-grid-tailwind {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-grid-tailwind {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .dashboard-grid-tailwind {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.dashboard-container-tailwind {
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .dashboard-container-tailwind {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-container-tailwind {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Responsive utilities */
+.mobile-stack-tailwind {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .mobile-stack-tailwind {
+    flex-direction: row;
+  }
+}
+
+.responsive-text-tailwind {
+  font-size: 0.875rem;
+}
+
+@media (min-width: 640px) {
+  .responsive-text-tailwind {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-text-tailwind {
+    font-size: 1.125rem;
+  }
+}

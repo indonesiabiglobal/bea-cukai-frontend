@@ -2930,6 +2930,10 @@ a.navbar-item.is-active,
   color: rgb(255, 255, 255);
 }
 
+.btn-primary-tailwind {
+  background-color: rgb(255, 255, 255);
+}
+
 .is-dark .menu-toggle .iconify {
   background: rgb(255, 255, 255);
   color: rgba(0, 0, 0, 0.7);

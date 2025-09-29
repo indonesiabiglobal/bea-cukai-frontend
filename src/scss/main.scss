@@ -11,11 +11,8 @@ SCSS Imports
 // Import Bulma first but with lower priority
 @import '../../node_modules/@cssninja/bulma-css-vars/bulma-cv-lib.sass';
 
-/* Tailwind CSS Integration - Higher Priority */
-@import './tailwind.scss';
-
-/* Tailwind Priority Overrides */
-@import './tailwind-priority.scss';
+/* Tailwind CSS Integration - Simplified for compatibility */
+@import './tailwind-simple.scss';
 
 @import './layout/all';
 @import './components/cards';

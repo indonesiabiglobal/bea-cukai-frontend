@@ -172,25 +172,25 @@ function exportExcel() {
             </div>
 
             <!-- Table -->
-            <div v-else class="overflow-x-auto rounded-xl border border-gray-200">
+            <div v-else class="overflow-x-auto rounded-xl border border-gray-200 max-h-[400px] overflow-y-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50 text-nowrap">
                         <tr class="text-sm font-semibold text-gray-600">
-                            <th class="px-3 py-2 text-left border-r border-gray-200">No</th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">No</th>
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">
                                 <button class="inline-flex items-center gap-1" @click="toggleSort('id_user')">
                                     ID User
                                     <span v-if="sortKey === 'id_user'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
                                 </button>
                             </th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">
                                 <button class="inline-flex items-center gap-1" @click="toggleSort('nm_user')">
                                     Nama User
                                     <span v-if="sortKey === 'nm_user'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
                                 </button>
                             </th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">Password</th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">Level</th>
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">Password</th>
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">Level</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 bg-white">

@@ -125,8 +125,8 @@ const options = computed(() => ({
               <thead class="bg-gray-50">
                 <tr class="text-xs font-semibold text-gray-600">
                   <th class="px-3 py-2 text-left">Kategori</th>
-                  <th class="px-3 py-2 text-right">Visits</th>
-                  <th class="px-3 py-2 text-right">Share</th>
+                  <th class="px-3 py-2 text-right bg-gray-50">Visits</th>
+                  <th class="px-3 py-2 text-right bg-gray-50">Share</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100 bg-white">
@@ -137,8 +137,8 @@ const options = computed(() => ({
                       <span class="font-medium text-gray-900">{{ r.name }}</span>
                     </span>
                   </td>
-                  <td class="px-3 py-2 text-right">{{ nf.format(r.visits) }}</td>
-                  <td class="px-3 py-2 text-right">
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ nf.format(r.visits) }}</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">
                     {{ total > 0 ? (r.visits / total * 100).toFixed(1) : '0.0' }}%
                   </td>
                 </tr>
@@ -146,8 +146,8 @@ const options = computed(() => ({
               <tfoot>
                 <tr class="bg-gray-50 text-sm font-semibold text-gray-700">
                   <td class="px-3 py-2 text-left">Total</td>
-                  <td class="px-3 py-2 text-right">{{ nf.format(total) }}</td>
-                  <td class="px-3 py-2 text-right">100%</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ nf.format(total) }}</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">100%</td>
                 </tr>
               </tfoot>
             </table>

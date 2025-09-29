@@ -190,32 +190,32 @@ function exportExcel() {
             </div>
 
             <!-- Table -->
-            <div v-else class="overflow-x-auto rounded-xl border border-gray-200">
+            <div v-else class="overflow-x-auto rounded-xl border border-gray-200 max-h-[400px] overflow-y-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50 text-nowrap">
                         <tr class="text-sm font-semibold text-gray-600">
-                            <th class="px-3 py-2 text-left border-r border-gray-200">No</th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">No</th>
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">
                                 <button class="inline-flex items-center gap-1" @click="toggleSort('item_code')">
                                     Kode Barang
                                     <span v-if="sortKey === 'item_code'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
                                 </button>
                             </th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">
                                 <button class="inline-flex items-center gap-1" @click="toggleSort('item_name')">
                                     Nama Barang
                                     <span v-if="sortKey === 'item_name'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
                                 </button>
                             </th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">Sat</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Saldo Awal</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Pemasukan</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Pengeluaran</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Penyesuaian</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Saldo Buku</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Stok Opname</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Selisih</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">ket</th>
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">Sat</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Saldo Awal</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Pemasukan</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Pengeluaran</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Penyesuaian</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Saldo Buku</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Stok Opname</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Selisih</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">ket</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 bg-white">
@@ -224,19 +224,19 @@ function exportExcel() {
                             <td class="px-3 py-2 border-r border-gray-200 font-semibold">{{ r.item_code }}</td>
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.item_name }}</td>
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.unit_code }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 font-semibold">{{
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold">{{
                                 nf.format(toNum(r.awal)) }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 font-semibold text-green-600">{{
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold text-green-600">{{
                                 nf.format(toNum(r.masuk)) }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 font-semibold text-red-600">{{
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold text-red-600">{{
                                 nf.format(toNum(r.keluar)) }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 font-semibold">{{
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold">{{
                                 nf.format(toNum(r.peny)) }}</td>
                             <td class="px-3 py-2 text-right font-bold text-blue-600">{{ nf.format(toNum(r.akhir)) }}
                             </td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 font-semibold">{{
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold">{{
                                 nf.format(toNum(r.opname)) }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 font-semibold" :class="{
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold" :class="{
                                 'text-green-600': toNum(r.selisih) > 0,
                                 'text-red-600': toNum(r.selisih) < 0
                             }">{{ nf.format(toNum(r.selisih)) }}</td>

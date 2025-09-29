@@ -189,7 +189,7 @@ onUnmounted(() => {
     <div class="tab-content flex-1 overflow-y-auto">
 
       <!-- Home Content -->
-      <div v-if="activeTab === 'home'" class="h-full">
+      <div v-if="activeTab === 'home'" class="h-full overflow-y-auto">
         <div class="mx-auto px-6 py-8">
 
           <!-- Welcome Header -->
@@ -264,7 +264,7 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .dashboard-tabs-container {
-  height: 100vh;
+  height: 88vh;
   display: flex;
   flex-direction: column;
   background: #f8fafc;

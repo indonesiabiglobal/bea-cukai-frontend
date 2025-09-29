@@ -200,34 +200,34 @@ function exportExcel() {
       </div>
 
       <!-- Table -->
-      <div v-else class="overflow-x-auto  rounded-xl border border-gray-200">
+      <div v-else class="overflow-x-auto rounded-xl border border-gray-200 max-h-[400px] overflow-y-auto max-h-[400px] overflow-y-auto">
         <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50 text-nowrap">
+          <thead class="bg-gray-50 text-nowrap ">
             <tr class="text-sm font-semibold text-gray-600">
-              <th class="px-3 py-2 text-left border-r border-gray-200">No</th>
-              <th class="px-3 py-2 text-left border-r border-gray-200">Jenis Pabean</th>
-              <th class="px-3 py-2 text-left border-r border-gray-200">No. Pabean</th>
-              <th class="px-3 py-2 text-left border-r border-gray-200">
+              <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">No</th>
+              <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">Jenis Pabean</th>
+              <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">No. Pabean</th>
+              <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">
                 <button class="inline-flex items-center gap-1" @click="toggleSort('tgl_pabean')">
                   Tgl Pabean
                   <span v-if="sortKey === 'tgl_pabean'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
                 </button>
               </th>
-              <th class="px-3 py-2 text-left border-r border-gray-200">No. Bukti</th>
-              <th class="px-3 py-2 text-left border-r border-gray-200">
+              <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">No. Bukti</th>
+              <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">
                 <button class="inline-flex items-center gap-1" @click="toggleSort('tgl_bukti')">
                   Tgl Bukti
                   <span v-if="sortKey === 'tgl_bukti'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
                 </button>
               </th>
-              <th class="px-3 py-2 text-left border-r border-gray-200">Pengirim Barang</th>
-              <th class="px-3 py-2 text-left border-r border-gray-200">Kode Barang</th>
-              <th class="px-3 py-2 text-left border-r border-gray-200">Nama Barang</th>
-              <th class="px-3 py-2 text-right border-r border-gray-200">Jumlah</th>
-              <th class="px-3 py-2 text-right border-r border-gray-200">Sat</th>
-              <th class="px-3 py-2 text-right border-r border-gray-200">Valas</th>
-              <th class="px-3 py-2 text-right border-r border-gray-200">Nilai</th>
-              <th class="px-3 py-2 text-right">Ket</th>
+              <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">Pengirim Barang</th>
+              <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">Kode Barang</th>
+              <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">Nama Barang</th>
+              <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Jumlah</th>
+              <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Sat</th>
+              <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Valas</th>
+              <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Nilai</th>
+              <th class="px-3 py-2 text-right bg-gray-50">Ket</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100 bg-white">
@@ -241,11 +241,11 @@ function exportExcel() {
               <td class="px-3 py-2 border-r border-gray-200">{{ r.pengirim_barang }}</td>
               <td class="px-3 py-2 border-r border-gray-200">{{ r.kode_barang }}</td>
               <td class="px-3 py-2 border-r border-gray-200">{{ r.nama_barang }}</td>
-              <td class="px-3 py-2 text-right border-r border-gray-200">{{ nf.format(toNum(r.jumlah)) }}</td>
-              <td class="px-3 py-2 text-right border-r border-gray-200">{{ r.sat }}</td>
-              <td class="px-3 py-2 text-right border-r border-gray-200">{{ r.valas || '-' }}</td>
-              <td class="px-3 py-2 text-right border-r border-gray-200">{{ toNum(r.nilai) }}</td>
-              <td class="px-3 py-2 text-right">{{ r.ket || '-' }}</td>
+              <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{ nf.format(toNum(r.jumlah)) }}</td>
+              <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{ r.sat }}</td>
+              <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{ r.valas || '-' }}</td>
+              <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{ toNum(r.nilai) }}</td>
+              <td class="px-3 py-2 text-right bg-gray-50">{{ r.ket || '-' }}</td>
             </tr>
           </tbody>
         </table>

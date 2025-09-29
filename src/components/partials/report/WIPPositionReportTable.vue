@@ -185,25 +185,25 @@ const totalQuantity = computed(() => {
       </div>
 
       <!-- Table -->
-      <div v-else class="overflow-x-auto rounded-xl border border-gray-200">
+      <div v-else class="overflow-x-auto rounded-xl border border-gray-200 max-h-[400px] overflow-y-auto">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50 text-nowrap">
             <tr class="text-sm font-semibold text-gray-600">
-              <th class="px-3 py-2 text-left border-r border-gray-200 w-16">No</th>
-              <th class="px-3 py-2 text-left border-r border-gray-200">
+              <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50 w-16">No</th>
+              <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">
                 <button class="inline-flex items-center gap-1" @click="toggleSort('kode_barang')">
                   Kode Barang
                   <span v-if="sortKey === 'kode_barang'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
                 </button>
               </th>
-              <th class="px-3 py-2 text-left border-r border-gray-200">
+              <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">
                 <button class="inline-flex items-center gap-1" @click="toggleSort('nama_barang')">
                   Nama Barang
                   <span v-if="sortKey === 'nama_barang'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
                 </button>
               </th>
               <th class="px-3 py-2 text-center border-r border-gray-200">Satuan</th>
-              <th class="px-3 py-2 text-right">
+              <th class="px-3 py-2 text-right bg-gray-50">
                 <button class="inline-flex items-center gap-1" @click="toggleSort('jumlah')">
                   Jumlah
                   <span v-if="sortKey === 'jumlah'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>

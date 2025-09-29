@@ -226,47 +226,47 @@ function exportExcel() {
             </div>
 
             <!-- Table -->
-            <div v-else class="overflow-x-auto rounded-xl border border-gray-200">
+            <div v-else class="overflow-x-auto rounded-xl border border-gray-200 max-h-[400px] overflow-y-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50 text-nowrap">
                         <tr class="text-sm font-semibold text-gray-600">
-                            <th class="px-3 py-2 text-left border-r border-gray-200">No</th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">No</th>
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">
                                 <button class="inline-flex items-center gap-1" @click="toggleSort('item_code')">
                                     Kode Barang
                                     <span v-if="sortKey === 'item_code'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
                                 </button>
                             </th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">
                                 <button class="inline-flex items-center gap-1" @click="toggleSort('item_name')">
                                     Nama Barang
                                     <span v-if="sortKey === 'item_name'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
                                 </button>
                             </th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">Grup Item</th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">Tipe Item</th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">Satuan</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Safety Stock</th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">Satuan Beli</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Harga Beli</th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">Satuan Jual</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Harga Jual</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Last Cost</th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">Jenis Bahan</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Tebal</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Lebar</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Panjang</th>
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">Grup Item</th>
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">Tipe Item</th>
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">Satuan</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Safety Stock</th>
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">Satuan Beli</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Harga Beli</th>
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">Satuan Jual</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Harga Jual</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Last Cost</th>
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">Jenis Bahan</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Tebal</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Lebar</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Panjang</th>
                             <th class="px-3 py-2 text-center border-r border-gray-200">Corona</th>
                             <th class="px-3 py-2 text-center border-r border-gray-200">Embos</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Isi/Gaiso</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Jml Gaiso</th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">Seal</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Lebar Hagata</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Dalam Hagata</th>
-                            <th class="px-3 py-2 text-left border-r border-gray-200">Tipe Hagata</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Isi/Palet</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">Gr Unit</th>
-                            <th class="px-3 py-2 text-right border-r border-gray-200">No Han</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Isi/Gaiso</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Jml Gaiso</th>
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">Seal</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Lebar Hagata</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Dalam Hagata</th>
+                            <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">Tipe Hagata</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Isi/Palet</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">Gr Unit</th>
+                            <th class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">No Han</th>
                             <th class="px-3 py-2 text-center border-r border-gray-200">Status</th>
                         </tr>
                     </thead>
@@ -278,21 +278,21 @@ function exportExcel() {
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.item_group }}</td>
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.item_type_code }}</td>
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.unit_code }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 font-semibold">{{
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold">{{
                                 nf.format(toNum(r.safety_stock)) }}</td>
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.pch_unit }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 font-semibold text-green-600">{{
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold text-green-600">{{
                                 nf.format(toNum(r.pch_price)) }}</td>
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.sales_unit }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 font-semibold text-blue-600">{{
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold text-blue-600">{{
                                 nf.format(toNum(r.sales_price)) }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 font-semibold">{{
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold">{{
                                 nf.format(toNum(r.last_cost)) }}</td>
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.jenis_bahan }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200">{{ nf.format(toNum(r.tebal)) }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200">{{ nf.format(toNum(r.lebar)) }}
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{ nf.format(toNum(r.tebal)) }}</td>
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{ nf.format(toNum(r.lebar)) }}
                             </td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200">{{ nf.format(toNum(r.panjang)) }}
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{ nf.format(toNum(r.panjang)) }}
                             </td>
                             <td class="px-3 py-2 text-center border-r border-gray-200">
                                 <span :class="{
@@ -310,21 +310,21 @@ function exportExcel() {
                                     {{ r.embos ? 'Ya' : 'Tidak' }}
                                 </span>
                             </td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200">{{
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{
                                 nf.format(toNum(r.isi_per_gaiso)) }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200">{{ nf.format(toNum(r.jml_gaiso)) }}
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{ nf.format(toNum(r.jml_gaiso)) }}
                             </td>
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.seal }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200">{{
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{
                                 nf.format(toNum(r.lebar_hagata)) }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200">{{
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{
                                 nf.format(toNum(r.dalam_hagata)) }}</td>
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.tipe_hagata }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200">{{
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{
                                 nf.format(toNum(r.isi_per_palet)) }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200">{{ nf.format(toNum(r.gr_unit)) }}
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{ nf.format(toNum(r.gr_unit)) }}
                             </td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200">{{ nf.format(toNum(r.no_han)) }}
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{ nf.format(toNum(r.no_han)) }}
                             </td>
                             <td class="px-3 py-2 text-center border-r border-gray-200">
                                 <span :class="{

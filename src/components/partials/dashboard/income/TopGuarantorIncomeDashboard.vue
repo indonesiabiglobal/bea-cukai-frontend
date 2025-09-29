@@ -139,9 +139,9 @@ const options = computed(() => ({
               <thead class="bg-gray-50">
                 <tr class="text-xs font-semibold text-gray-600">
                   <th class="px-3 py-2 text-left">Guarantor</th>
-                  <th class="px-3 py-2 text-right">Debit</th>
-                  <th class="px-3 py-2 text-right">Credit</th>
-                  <th class="px-3 py-2 text-right">Net</th>
+                  <th class="px-3 py-2 text-right bg-gray-50">Debit</th>
+                  <th class="px-3 py-2 text-right bg-gray-50">Credit</th>
+                  <th class="px-3 py-2 text-right bg-gray-50">Net</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100 bg-white">
@@ -150,9 +150,9 @@ const options = computed(() => ({
                     <div class="font-medium text-gray-900 truncate max-w-[100px]" :title="r.name">{{ r.name || r.code }}</div>
                     <div class="text-[11px] text-gray-500">{{ r.code || '-' }}</div>
                   </td>
-                  <td class="px-3 py-2 text-right">{{ cf.format(r.debit) }}</td>
-                  <td class="px-3 py-2 text-right">{{ cf.format(r.credit) }}</td>
-                  <td class="px-3 py-2 text-right" :class="r.net >= 0 ? 'text-emerald-600' : 'text-rose-600'">{{ cf.format(r.net) }}</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ cf.format(r.debit) }}</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ cf.format(r.credit) }}</td>
+                  <td class="px-3 py-2 text-right bg-gray-50" :class="r.net >= 0 ? 'text-emerald-600' : 'text-rose-600'">{{ cf.format(r.net) }}</td>
                 </tr>
               </tbody>
             </table>

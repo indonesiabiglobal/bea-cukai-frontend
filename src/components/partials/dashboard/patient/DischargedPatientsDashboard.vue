@@ -331,25 +331,25 @@ function exportExcel() {
 									<span v-if="sortKey === 'end_date'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
 								</button>
 							</th>
-							<th class="px-3 py-2 text-right">
+							<th class="px-3 py-2 text-right bg-gray-50">
 								<button class="inline-flex items-center gap-1" @click="toggleSort('los_days')">
 									LOS (hari)
 									<span v-if="sortKey === 'los_days'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
 								</button>
 							</th>
-							<th class="px-3 py-2 text-right">
+							<th class="px-3 py-2 text-right bg-gray-50">
 								<button class="inline-flex items-center gap-1" @click="toggleSort('total_debit')">
 									Debit
 									<span v-if="sortKey === 'total_debit'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
 								</button>
 							</th>
-							<th class="px-3 py-2 text-right">
+							<th class="px-3 py-2 text-right bg-gray-50">
 								<button class="inline-flex items-center gap-1" @click="toggleSort('total_credit')">
 									Credit
 									<span v-if="sortKey === 'total_credit'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
 								</button>
 							</th>
-							<th class="px-3 py-2 text-right">Net</th>
+							<th class="px-3 py-2 text-right bg-gray-50">Net</th>
 						</tr>
 					</thead>
 					<tbody class="divide-y divide-gray-100 bg-white">
@@ -376,10 +376,10 @@ function exportExcel() {
 							<td class="px-3 py-2">
 								{{ parseDate(r.end_date) ? dtf.format(parseDate(r.end_date)!) : '-' }}
 							</td>
-							<td class="px-3 py-2 text-right">{{ nf.format(r.los_days) }}</td>
-							<td class="px-3 py-2 text-right">{{ cf.format(toNum(r.total_debit)) }}</td>
-							<td class="px-3 py-2 text-right">{{ cf.format(toNum(r.total_credit)) }}</td>
-							<td class="px-3 py-2 text-right">
+							<td class="px-3 py-2 text-right bg-gray-50">{{ nf.format(r.los_days) }}</td>
+							<td class="px-3 py-2 text-right bg-gray-50">{{ cf.format(toNum(r.total_debit)) }}</td>
+							<td class="px-3 py-2 text-right bg-gray-50">{{ cf.format(toNum(r.total_credit)) }}</td>
+							<td class="px-3 py-2 text-right bg-gray-50">
 								{{ cf.format(toNum(r.total_debit) - toNum(r.total_credit)) }}
 							</td>
 						</tr>

@@ -294,15 +294,15 @@ function exportExcel() {
                   <span v-if="sortKey === 'start_date'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
                 </button>
               </th>
-              <th class="px-3 py-2 text-right">
+              <th class="px-3 py-2 text-right bg-gray-50">
                 <button class="inline-flex items-center gap-1" @click="toggleSort('los_days')">
                   LOS (hari)
                   <span v-if="sortKey === 'los_days'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
                 </button>
               </th>
-              <th class="px-3 py-2 text-right">Debit</th>
-              <th class="px-3 py-2 text-right">Credit</th>
-              <th class="px-3 py-2 text-right">Net</th>
+              <th class="px-3 py-2 text-right bg-gray-50">Debit</th>
+              <th class="px-3 py-2 text-right bg-gray-50">Credit</th>
+              <th class="px-3 py-2 text-right bg-gray-50">Net</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100 bg-white">
@@ -322,10 +322,10 @@ function exportExcel() {
               <td class="px-3 py-2">
                 {{ r.start_date ? dtf.format(new Date(r.start_date)) : '-' }}
               </td>
-              <td class="px-3 py-2 text-right">{{ nf.format(r.los_days) }}</td>
-              <td class="px-3 py-2 text-right">{{ cf.format(toNum(r.total_debit)) }}</td>
-              <td class="px-3 py-2 text-right">{{ cf.format(toNum(r.total_credit)) }}</td>
-              <td class="px-3 py-2 text-right">
+              <td class="px-3 py-2 text-right bg-gray-50">{{ nf.format(r.los_days) }}</td>
+              <td class="px-3 py-2 text-right bg-gray-50">{{ cf.format(toNum(r.total_debit)) }}</td>
+              <td class="px-3 py-2 text-right bg-gray-50">{{ cf.format(toNum(r.total_credit)) }}</td>
+              <td class="px-3 py-2 text-right bg-gray-50">
                 {{ cf.format(toNum(r.total_debit) - toNum(r.total_credit)) }}
               </td>
             </tr>

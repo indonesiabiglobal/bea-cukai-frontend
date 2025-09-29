@@ -224,8 +224,8 @@ const barOptions = computed(() => ({
               <thead class="bg-gray-50">
                 <tr class="text-xs font-semibold text-gray-600">
                   <th class="px-3 py-2 text-left">Kategori</th>
-                  <th class="px-3 py-2 text-right">Nilai</th>
-                  <th class="px-3 py-2 text-right">Share</th>
+                  <th class="px-3 py-2 text-right bg-gray-50">Nilai</th>
+                  <th class="px-3 py-2 text-right bg-gray-50">Share</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100 bg-white">
@@ -237,8 +237,8 @@ const barOptions = computed(() => ({
                       <span class="font-medium text-gray-900">{{ r.name }}</span>
                     </span>
                   </td>
-                  <td class="px-3 py-2 text-right">{{ cf.format((r as any)[metric]) }}</td>
-                  <td class="px-3 py-2 text-right">
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ cf.format((r as any)[metric]) }}</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">
                     <template v-if="metric !== 'net'">
                       {{ totalVal > 0
                         ? (((Number((r as any)[metric])) / totalVal) * 100).toFixed(1)
@@ -255,8 +255,8 @@ const barOptions = computed(() => ({
               <tfoot>
                 <tr class="bg-gray-50 text-sm font-semibold text-gray-700">
                   <td class="px-3 py-2 text-left">Total</td>
-                  <td class="px-3 py-2 text-right">{{ cf.format(totalVal) }}</td>
-                  <td class="px-3 py-2 text-right">{{ metric !== 'net' ? '100%' : '—' }}</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ cf.format(totalVal) }}</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ metric !== 'net' ? '100%' : '—' }}</td>
                 </tr>
               </tfoot>
             </table>

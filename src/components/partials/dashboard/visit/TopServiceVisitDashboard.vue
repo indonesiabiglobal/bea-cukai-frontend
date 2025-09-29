@@ -175,8 +175,8 @@ function exportServicesExcel() {
               <thead class="bg-gray-50">
                 <tr class="text-xs font-semibold text-gray-600">
                   <th class="px-3 py-2 text-left">Service</th>
-                  <th class="px-3 py-2 text-right">Visits</th>
-                  <th class="px-3 py-2 text-right">Share</th>
+                  <th class="px-3 py-2 text-right bg-gray-50">Visits</th>
+                  <th class="px-3 py-2 text-right bg-gray-50">Share</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100 bg-white">
@@ -185,16 +185,16 @@ function exportServicesExcel() {
                     <div class="font-medium text-gray-900">{{ r.name }}</div>
                     <div v-if="r.code" class="text-[11px] text-gray-500">Code: {{ r.code }}</div>
                   </td>
-                  <td class="px-3 py-2 text-right">{{ nf.format(r.visits) }}</td>
-                  <td class="px-3 py-2 text-right">{{ total > 0 ? (((r.visits) /
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ nf.format(r.visits) }}</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ total > 0 ? (((r.visits) /
                     total) * 100).toFixed(1) : '0.0' }}%</td>
                 </tr>
               </tbody>
               <tfoot>
                 <tr class="bg-gray-50 text-sm font-semibold text-gray-700">
                   <td class="px-3 py-2 text-left">Total (Top {{ topServices.length }})</td>
-                  <td class="px-3 py-2 text-right">{{ nf.format(total) }}</td>
-                  <td class="px-3 py-2 text-right">100%</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ nf.format(total) }}</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">100%</td>
                 </tr>
               </tfoot>
             </table>

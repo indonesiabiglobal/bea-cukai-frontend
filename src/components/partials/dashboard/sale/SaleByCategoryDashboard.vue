@@ -200,8 +200,8 @@ function exportSaleCategoryExcel() {
               <thead class="bg-gray-50">
                 <tr class="text-xs font-semibold text-gray-600">
                   <th class="px-3 py-2 text-left">Category</th>
-                  <th class="px-3 py-2 text-right">{{ metric === 'subtotal' ? 'Subtotal' : 'Qty' }}</th>
-                  <th class="px-3 py-2 text-right">Share</th>
+                  <th class="px-3 py-2 text-right bg-gray-50">{{ metric === 'subtotal' ? 'Subtotal' : 'Qty' }}</th>
+                  <th class="px-3 py-2 text-right bg-gray-50">Share</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100 bg-white">
@@ -212,10 +212,10 @@ function exportSaleCategoryExcel() {
                       <span class="font-medium text-gray-900">{{ r.name }}</span>
                     </span>
                   </td>
-                  <td class="px-3 py-2 text-right">{{ metric === 'subtotal' ? cf.format(r.subtotal) : nf.format(r.qty)
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ metric === 'subtotal' ? cf.format(r.subtotal) : nf.format(r.qty)
                   }}
                   </td>
-                  <td class="px-3 py-2 text-right">{{ totalVal > 0 ? (((metric === 'subtotal' ? r.subtotal : r.qty) /
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ totalVal > 0 ? (((metric === 'subtotal' ? r.subtotal : r.qty) /
                     totalVal)
                     * 100).toFixed(1) : '0.0' }}%</td>
                 </tr>
@@ -223,10 +223,10 @@ function exportSaleCategoryExcel() {
               <tfoot>
                 <tr class="bg-gray-50 text-sm font-semibold text-gray-700">
                   <td class="px-3 py-2 text-left">Total</td>
-                  <td class="px-3 py-2 text-right">{{ metric === 'subtotal' ? cf.format(totalVal) : nf.format(totalVal)
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ metric === 'subtotal' ? cf.format(totalVal) : nf.format(totalVal)
                   }}
                   </td>
-                  <td class="px-3 py-2 text-right">100%</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">100%</td>
                 </tr>
               </tfoot>
             </table>

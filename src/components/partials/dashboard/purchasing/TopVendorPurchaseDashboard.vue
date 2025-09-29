@@ -221,10 +221,10 @@ function exportVendorsExcel() {
               <thead class="bg-gray-50">
                 <tr class="text-xs font-semibold text-gray-600">
                   <th class="px-3 py-2 text-left">Vendor</th>
-                  <th class="px-3 py-2 text-right">Average Price</th>
-                  <th class="px-3 py-2 text-right">Qty</th>
-                  <th class="px-3 py-2 text-right">Subtotal</th>
-                  <th class="px-3 py-2 text-right">Share</th>
+                  <th class="px-3 py-2 text-right bg-gray-50">Average Price</th>
+                  <th class="px-3 py-2 text-right bg-gray-50">Qty</th>
+                  <th class="px-3 py-2 text-right bg-gray-50">Subtotal</th>
+                  <th class="px-3 py-2 text-right bg-gray-50">Share</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100 bg-white">
@@ -233,20 +233,20 @@ function exportVendorsExcel() {
                     <div class="flex flex-col"><span class="font-medium text-gray-900">{{ r.name }}</span><span
                         class="text-xs text-gray-500">{{ r.code }}</span></div>
                   </td>
-                  <td class="px-3 py-2 text-right">{{ cf.format(r.average_price) }}</td>
-                  <td class="px-3 py-2 text-right">{{ nf.format(r.qty) }}</td>
-                  <td class="px-3 py-2 text-right">{{ cf.format(r.subtotal) }}</td>
-                  <td class="px-3 py-2 text-right">{{ total > 0 ? (((metric === 'subtotal' ? r.subtotal : r.qty) / total
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ cf.format(r.average_price) }}</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ nf.format(r.qty) }}</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ cf.format(r.subtotal) }}</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ total > 0 ? (((metric === 'subtotal' ? r.subtotal : r.qty) / total
                   ) * 100).toFixed(1) : '0.0' }}%</td>
                 </tr>
               </tbody>
               <tfoot>
                 <tr class="bg-gray-50 text-sm font-semibold text-gray-700">
                   <td class="px-3 py-2 text-left">Total (Top {{ limitedData.length }})</td>
-                  <td class="px-3 py-2 text-right"></td>
-                  <td class="px-3 py-2 text-right">{{ nf.format(totalQty) }}</td>
-                  <td class="px-3 py-2 text-right">{{ cf.format(subTotal) }}</td>
-                  <td class="px-3 py-2 text-right">100%</td>
+                  <td class="px-3 py-2 text-right bg-gray-50"></td>
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ nf.format(totalQty) }}</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ cf.format(subTotal) }}</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">100%</td>
                 </tr>
               </tfoot>
             </table>

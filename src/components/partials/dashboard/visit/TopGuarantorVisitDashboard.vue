@@ -174,7 +174,7 @@ function exportTopGuarantorsExcel() {
               <thead class="bg-gray-50">
                 <tr class="text-xs font-semibold text-gray-600">
                   <th class="px-3 py-2 text-left">Guarantor</th>
-                  <th class="px-3 py-2 text-right">Visits</th>
+                  <th class="px-3 py-2 text-right bg-gray-50">Visits</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-100 bg-white">
@@ -182,13 +182,13 @@ function exportTopGuarantorsExcel() {
                   <td class="px-3 py-2">
                     <div class="font-medium text-gray-900 truncate">{{ r.name }}</div>
                   </td>
-                  <td class="px-3 py-2 text-right">{{ nf.format(r.visits) }}</td>
+                  <td class="px-3 py-2 text-right bg-gray-50">{{ nf.format(r.visits) }}</td>
                 </tr>
               </tbody>
               <tfoot>
                 <tr class="bg-gray-50 text-sm font-semibold text-gray-700">
                   <td class="px-3 py-2 text-left">Total</td>
-                  <td class="px-3 py-2 text-right">
+                  <td class="px-3 py-2 text-right bg-gray-50">
                     {{nf.format(topGuarantors.reduce((s, r) => s + r.visits, 0))}}
                   </td>
                 </tr>

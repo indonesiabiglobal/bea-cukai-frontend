@@ -441,7 +441,10 @@ const clearProductName = () => {
       </div>
     </div>
     <EntryProductReportTable :items="entryProducts" :isFetching="isFetchingReport" :page="page" :limit="limit"
-      :total="total" :hasNext="hasNext" :hasPrev="hasPrev" :totalPages="totalPages" @change-page="handleChangePage" @change-limit="handleChangeLimit" />
+      :total="total" :hasNext="hasNext" :hasPrev="hasPrev" :totalPages="totalPages" 
+      :filterRange="filterRange" :selectedPabeanType="selectedPabeanType" :selectedProductGroup="selectedProductGroup"
+      :noPabean="noPabean" :productCode="productCode" :productName="productName"
+      @change-page="handleChangePage" @change-limit="handleChangeLimit" />
   </div>
 </template>
 

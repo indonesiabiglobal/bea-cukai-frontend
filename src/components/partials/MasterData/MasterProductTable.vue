@@ -83,6 +83,24 @@ function changeLimit(l: number) {
     emit('change-limit', l)
 }
 
+// Computed property for visible page numbers (-2 to +2 around current page)
+const visiblePages = computed(() => {
+    const current = page.value
+    const total = totalPages.value
+    const pages: number[] = []
+
+    // Calculate start and end of visible range
+    const start = Math.max(1, current - 2)
+    const end = Math.min(total, current + 2)
+
+    // Add pages in range
+    for (let i = start; i <= end; i++) {
+        pages.push(i)
+    }
+
+    return pages
+})
+
 /* ========= EXPORT EXCEL ========= */
 function autoColWidths(rows: any[], headers: string[]) {
     const lens = headers.map(h => h.length)
@@ -281,18 +299,25 @@ function exportExcel() {
                             <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold">{{
                                 nf.format(toNum(r.safety_stock)) }}</td>
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.pch_unit }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold text-green-600">{{
-                                nf.format(toNum(r.pch_price)) }}</td>
+                            <td
+                                class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold text-green-600">
+                                {{
+                                    nf.format(toNum(r.pch_price)) }}</td>
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.sales_unit }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold text-blue-600">{{
-                                nf.format(toNum(r.sales_price)) }}</td>
+                            <td
+                                class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold text-blue-600">
+                                {{
+                                    nf.format(toNum(r.sales_price)) }}</td>
                             <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold">{{
                                 nf.format(toNum(r.last_cost)) }}</td>
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.jenis_bahan }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{ nf.format(toNum(r.tebal)) }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{ nf.format(toNum(r.lebar)) }}
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{
+                                nf.format(toNum(r.tebal)) }}</td>
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{
+                                nf.format(toNum(r.lebar)) }}
                             </td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{ nf.format(toNum(r.panjang)) }}
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{
+                                nf.format(toNum(r.panjang)) }}
                             </td>
                             <td class="px-3 py-2 text-center border-r border-gray-200">
                                 <span :class="{
@@ -312,7 +337,8 @@ function exportExcel() {
                             </td>
                             <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{
                                 nf.format(toNum(r.isi_per_gaiso)) }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{ nf.format(toNum(r.jml_gaiso)) }}
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{
+                                nf.format(toNum(r.jml_gaiso)) }}
                             </td>
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.seal }}</td>
                             <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{
@@ -322,9 +348,11 @@ function exportExcel() {
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.tipe_hagata }}</td>
                             <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{
                                 nf.format(toNum(r.isi_per_palet)) }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{ nf.format(toNum(r.gr_unit)) }}
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{
+                                nf.format(toNum(r.gr_unit)) }}
                             </td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{ nf.format(toNum(r.no_han)) }}
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50">{{
+                                nf.format(toNum(r.no_han)) }}
                             </td>
                             <td class="px-3 py-2 text-center border-r border-gray-200">
                                 <span :class="{
@@ -360,11 +388,48 @@ function exportExcel() {
                         </div>
                     </div>
                 </div>
-                <div class="inline-flex rounded-lg overflow-hidden border border-gray-200">
-                    <button class="px-3 py-1 text-sm hover:bg-gray-50 disabled:opacity-50" :disabled="!hasPrev"
-                        @click="goPage(page - 1)">Prev</button>
+                <div class="inline-flex rounded-lg overflow-hidden border border-gray-200 bg-white">
+                    <!-- Previous Button -->
+                    <button class="px-3 py-1 text-sm hover:bg-gray-50 disabled:opacity-50 border-r border-gray-200"
+                        :disabled="!hasPrev" @click="goPage(page - 1)">
+                        Prev
+                    </button>
+
+                    <!-- First Page -->
+                    <button v-if="page > 3" class="px-3 py-1 text-sm hover:bg-gray-50 border-r border-gray-200"
+                        @click="goPage(1)">
+                        1
+                    </button>
+
+                    <!-- Ellipsis before current range -->
+                    <span v-if="page > 4" class="px-3 py-1 text-sm text-gray-400 border-r border-gray-200">...</span>
+
+                    <!-- Page numbers around current page (-2 to +2) -->
+                    <template v-for="pageNum in visiblePages" :key="pageNum">
+                        <button class="px-3 py-1 text-sm border-r border-gray-200 transition-colors duration-200"
+                            :class="{
+                                'bg-blue-500 text-white hover:bg-blue-600': pageNum === page,
+                                'hover:bg-gray-50 text-gray-700': pageNum !== page
+                            }" @click="goPage(pageNum)">
+                            {{ pageNum }}
+                        </button>
+                    </template>
+
+                    <!-- Ellipsis after current range -->
+                    <span v-if="page < totalPages - 3"
+                        class="px-3 py-1 text-sm text-gray-400 border-r border-gray-200">...</span>
+
+                    <!-- Last Page -->
+                    <button v-if="page < totalPages - 2"
+                        class="px-3 py-1 text-sm hover:bg-gray-50 border-r border-gray-200" @click="goPage(totalPages)">
+                        {{ totalPages }}
+                    </button>
+
+                    <!-- Next Button -->
                     <button class="px-3 py-1 text-sm hover:bg-gray-50 disabled:opacity-50" :disabled="!hasNext"
-                        @click="goPage(page + 1)">Next</button>
+                        @click="goPage(page + 1)">
+                        Next
+                    </button>
                 </div>
             </div>
         </div>

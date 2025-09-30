@@ -58,12 +58,12 @@ const sorted = computed(() => {
   return arr.sort((a, b) => {
     let va: any = (a as any)[k]
     let vb: any = (b as any)[k]
-    
+
     if (k === 'jumlah') {
       va = toNum(va)
       vb = toNum(vb)
     }
-    
+
     if (typeof va === 'string' && typeof vb === 'string') {
       return va.localeCompare(vb) * dir
     }
@@ -87,6 +87,24 @@ function goPage(p: number) {
 function changeLimit(l: number) {
   emit('change-limit', l)
 }
+
+// Computed property for visible page numbers (-2 to +2 around current page)
+const visiblePages = computed(() => {
+  const current = page.value
+  const total = totalPages.value
+  const pages: number[] = []
+
+  // Calculate start and end of visible range
+  const start = Math.max(1, current - 2)
+  const end = Math.min(total, current + 2)
+
+  // Add pages in range
+  for (let i = start; i <= end; i++) {
+    pages.push(i)
+  }
+
+  return pages
+})
 
 /* ========= EXPORT EXCEL ========= */
 function autoColWidths(rows: any[], headers: string[]) {
@@ -253,11 +271,46 @@ const totalQuantity = computed(() => {
             </div>
           </div>
         </div>
-        <div class="inline-flex rounded-lg overflow-hidden border border-gray-200">
-          <button class="px-3 py-1 text-sm hover:bg-gray-50 disabled:opacity-50" :disabled="!hasPrev"
-            @click="goPage(page - 1)">Prev</button>
+        <div class="inline-flex rounded-lg overflow-hidden border border-gray-200 bg-white">
+          <!-- Previous Button -->
+          <button class="px-3 py-1 text-sm hover:bg-gray-50 disabled:opacity-50 border-r border-gray-200"
+            :disabled="!hasPrev" @click="goPage(page - 1)">
+            Prev
+          </button>
+
+          <!-- First Page -->
+          <button v-if="page > 3" class="px-3 py-1 text-sm hover:bg-gray-50 border-r border-gray-200"
+            @click="goPage(1)">
+            1
+          </button>
+
+          <!-- Ellipsis before current range -->
+          <span v-if="page > 4" class="px-3 py-1 text-sm text-gray-400 border-r border-gray-200">...</span>
+
+          <!-- Page numbers around current page (-2 to +2) -->
+          <template v-for="pageNum in visiblePages" :key="pageNum">
+            <button class="px-3 py-1 text-sm border-r border-gray-200 transition-colors duration-200" :class="{
+              'bg-blue-500 text-white hover:bg-blue-600': pageNum === page,
+              'hover:bg-gray-50 text-gray-700': pageNum !== page
+            }" @click="goPage(pageNum)">
+              {{ pageNum }}
+            </button>
+          </template>
+
+          <!-- Ellipsis after current range -->
+          <span v-if="page < totalPages - 3" class="px-3 py-1 text-sm text-gray-400 border-r border-gray-200">...</span>
+
+          <!-- Last Page -->
+          <button v-if="page < totalPages - 2" class="px-3 py-1 text-sm hover:bg-gray-50 border-r border-gray-200"
+            @click="goPage(totalPages)">
+            {{ totalPages }}
+          </button>
+
+          <!-- Next Button -->
           <button class="px-3 py-1 text-sm hover:bg-gray-50 disabled:opacity-50" :disabled="!hasNext"
-            @click="goPage(page + 1)">Next</button>
+            @click="goPage(page + 1)">
+            Next
+          </button>
         </div>
       </div>
     </div>

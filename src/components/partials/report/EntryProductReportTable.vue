@@ -2,6 +2,8 @@
 import dayjs from 'dayjs';
 import * as XLSX from 'xlsx'
 
+const useApi = useApiFetchV2();
+
 /** Samakan dengan payload backend */
 const props = withDefaults(defineProps<{
   items: EntryProduct[] | null | undefined
@@ -13,6 +15,13 @@ const props = withDefaults(defineProps<{
   hasNext?: boolean
   hasPrev?: boolean
   totalPages?: number
+  /** Filter data for export */
+  filterRange?: { start: Date, end: Date }
+  selectedPabeanType?: string
+  selectedProductGroup?: string
+  noPabean?: string
+  productCode?: string
+  productName?: string
 }>(), {
   page: 1,
   limit: 20,
@@ -20,6 +29,11 @@ const props = withDefaults(defineProps<{
   hasNext: false,
   hasPrev: false,
   totalPages: 1,
+  selectedPabeanType: '',
+  selectedProductGroup: '',
+  noPabean: '',
+  productCode: '',
+  productName: '',
 })
 
 /** Emit ke parent kalau page berubah (server-side pagination) */
@@ -91,7 +105,27 @@ function changeLimit(l: number) {
   emit('change-limit', l)
 }
 
+// Computed property for visible page numbers (-2 to +2 around current page)
+const visiblePages = computed(() => {
+  const current = page.value
+  const total = totalPages.value
+  const pages: number[] = []
+
+  // Calculate start and end of visible range
+  const start = Math.max(1, current - 2)
+  const end = Math.min(total, current + 2)
+
+  // Add pages in range
+  for (let i = start; i <= end; i++) {
+    pages.push(i)
+  }
+
+  return pages
+})
+
 /* ========= EXPORT EXCEL ========= */
+const isExporting = ref(false)
+
 function autoColWidths(rows: any[], headers: string[]) {
   const lens = headers.map(h => h.length)
   for (const r of rows) {
@@ -116,57 +150,146 @@ const exportFileName = computed(() => {
   return `EntryProductReport_${y}${m}${d}_${hh}${mm}.xlsx`
 })
 
-function exportExcel() {
-  const data = sorted.value
-  if (!data.length) return
+async function exportExcel() {
+  isExporting.value = true
 
-  // Map ke bentuk tabular “rapi”
-  const headers = [
-    'No',
-    'Jenis Pabean',
-    'No. Pabean',
-    'Tgl Pabean',
-    'No. Bukti',
-    'Tgl Bukti',
-    'Pengirim Barang',
-    'Kode Barang',
-    'Nama Barang',
-    'Jumlah',
-    'Sat',
-    'Valas',
-    'Nilai',
-    'Ket',
+  // Fetch all data from API without pagination
+  let allData: EntryProduct[] = [];
+
+  try {
+    const response = await useApi.get('report/entry-products', {
+      // Remove page and limit to get all data
+      from: props.filterRange?.start ? dayjs(props.filterRange.start).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD'),
+      to: props.filterRange?.end ? dayjs(props.filterRange.end).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD'),
+      pabeanType: props.selectedPabeanType || '',
+      productGroup: props.selectedProductGroup || '',
+      noPabean: props.noPabean || '',
+      productCode: props.productCode || '',
+      productName: props.productName || '',
+    }, false);
+
+    // Map API response to EntryProduct type
+    allData = response.data.map((item: any, idx: number): EntryProduct => ({
+      no: idx + 1,
+      jenis_pabean: item.jenis_pabean || '',
+      no_pabean: item.no_pabean || '',
+      tgl_pabean: item.tgl_pabean || '',
+      no_bukti: item.vend_dlv_no || '',
+      tgl_bukti: item.trans_date || '',
+      pengirim_barang: item.vendor_name || '',
+      kode_barang: item.item_code || '',
+      nama_barang: item.item_name || '',
+      jumlah: Number(item.rcv_qty) || 0,
+      sat: item.pch_unit || '',
+      valas: item.curr_code || null,
+      nilai: item.net_price || 0,
+      ket: '',
+    }));
+  } catch (error) {
+    console.error('Error fetching export data:', error);
+    // Fallback to current displayed data if API call fails
+    allData = sorted.value;
+  }
+
+  if (!allData.length) {
+    isExporting.value = false
+    return
+  }
+
+  // Create workbook and worksheet with proper headers
+  // Create workbook
+  const wb = XLSX.utils.book_new()
+
+  // Create worksheet with proper structure
+  const ws = XLSX.utils.aoa_to_sheet([])
+
+  // Add header information
+  const currentDate = new Date()
+  const dateStr = currentDate.toLocaleDateString('id-ID')
+
+  // Header rows
+  XLSX.utils.sheet_add_aoa(ws, [
+    ['LAPORAN PENERIMAAN BARANG PER DOKUMEN PABEAN'],
+    ['PT FUKUSUKE KOGYO INDONESIA'],
+    [`PERIODE : ${dateStr}`],
+    [], // Empty row
+    // Main header with merged cells structure
+    ['No.', 'DOKUMEN PABEAN', '', '', 'BUKTI PENERIMAAN BARANG', '', 'PENGIRIM', 'KODE', 'NAMA', 'JUMLAH', 'SATUAN', 'VALAS', 'NILAI'],
+    ['', 'JENIS', 'NOMOR', 'TANGGAL', 'NOMOR', 'TANGGAL', 'BARANG', 'BARANG', 'BARANG', '', '', '', '']
+  ], { origin: 'A1' })
+
+  // Add data rows starting from row 7
+  const dataRows = allData.map((r, index) => [
+    index + 1,
+    r.jenis_pabean || '',
+    r.no_pabean || '',
+    r.tgl_pabean ? dtf.format(new Date(r.tgl_pabean)) : '',
+    r.no_bukti || '',
+    r.tgl_bukti ? dtf.format(new Date(r.tgl_bukti)) : '',
+    r.pengirim_barang || '',
+    r.kode_barang || '',
+    r.nama_barang || '',
+    toNum(r.jumlah),
+    r.sat || '',
+    r.valas || '',
+    toNum(r.nilai)
+  ])
+
+  XLSX.utils.sheet_add_aoa(ws, dataRows, { origin: 'A7' })
+
+  // Merge cells for headers
+  const merges = [
+    { s: { c: 0, r: 0 }, e: { c: 12, r: 0 } }, // Title row
+    { s: { c: 0, r: 1 }, e: { c: 12, r: 1 } }, // Company row
+    { s: { c: 0, r: 2 }, e: { c: 12, r: 2 } }, // Period row
+    // Main header merges
+    { s: { c: 0, r: 4 }, e: { c: 0, r: 5 } }, // No. column
+    { s: { c: 1, r: 4 }, e: { c: 3, r: 4 } }, // DOKUMEN PABEAN
+    { s: { c: 4, r: 4 }, e: { c: 5, r: 4 } }, // BUKTI PENERIMAAN BARANG
+    { s: { c: 6, r: 4 }, e: { c: 6, r: 5 } }, // PENGIRIM BARANG
+    { s: { c: 7, r: 4 }, e: { c: 7, r: 5 } }, // KODE BARANG
+    { s: { c: 8, r: 4 }, e: { c: 8, r: 5 } }, // NAMA BARANG
+    { s: { c: 9, r: 4 }, e: { c: 9, r: 5 } }, // JUMLAH
+    { s: { c: 10, r: 4 }, e: { c: 10, r: 5 } }, // SATUAN
+    { s: { c: 11, r: 4 }, e: { c: 11, r: 5 } }, // VALAS
+    { s: { c: 12, r: 4 }, e: { c: 12, r: 5 } }, // NILAI
   ]
 
-  const rows = data.map((r, index) => {
-    return {
-      'No': index + 1,
-      'Jenis Pabean': r.jenis_pabean || '',
-      'No. Pabean': r.no_pabean || '',
-      'Tgl Pabean': r.tgl_pabean ? dtf.format(new Date(r.tgl_pabean)) : '',
-      'No. Bukti': r.no_bukti || '',
-      'Tgl Bukti': r.tgl_bukti ? dtf.format(new Date(r.tgl_bukti)) : '',
-      'Pengirim Barang': r.pengirim_barang || '',
-      'Kode Barang': r.kode_barang || '',
-      'Nama Barang': r.nama_barang || '',
-      'Jumlah': toNum(r.jumlah),
-      'Sat': r.sat || '',
-      'Valas': r.valas || '',
-      'Nilai': toNum(r.nilai),
-      'Ket': r.ket || '',
-    }
-  })
+  ws['!merges'] = merges
 
-  // Worksheet utama
-  const ws = XLSX.utils.json_to_sheet(rows, { header: headers })
+  // Set column widths
+  const colWidths = [
+    { wch: 5 },   // No
+    { wch: 12 },  // Jenis
+    { wch: 15 },  // No Pabean
+    { wch: 12 },  // Tgl Pabean
+    { wch: 15 },  // No Bukti
+    { wch: 12 },  // Tgl Bukti
+    { wch: 20 },  // Pengirim
+    { wch: 15 },  // Kode Barang
+    { wch: 25 },  // Nama Barang
+    { wch: 10 },  // Jumlah
+    { wch: 8 },   // Satuan
+    { wch: 8 },   // Valas
+    { wch: 15 },  // Nilai
+  ]
+  ws['!cols'] = colWidths
 
-  // Auto column width
-  ws['!cols'] = autoColWidths(rows, headers)
+  // Set row heights for better appearance
+  if (!ws['!rows']) ws['!rows'] = []
+  ws['!rows'][0] = { hpt: 25 } // Title row height
+  ws['!rows'][1] = { hpt: 20 } // Company row height
+  ws['!rows'][2] = { hpt: 20 } // Period row height
+  ws['!rows'][4] = { hpt: 25 } // Header row height
+  ws['!rows'][5] = { hpt: 25 } // Sub-header row height
 
-  // Workbook & save
-  const wb = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(wb, ws, 'Inpatients')
+  // Add worksheet to workbook
+  XLSX.utils.book_append_sheet(wb, ws, 'Laporan Pemasukan Barang')
+
+  // Save file
   XLSX.writeFile(wb, exportFileName.value)
+
+  isExporting.value = false
 }
 </script>
 
@@ -183,9 +306,15 @@ function exportExcel() {
         <div class="flex items-center gap-2 w-full lg:w-auto">
           <!-- Tombol Export -->
           <button
-            class="px-3 py-1.5 text-sm rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow disabled:opacity-50"
-            :disabled="isFetching || !sorted.length" @click="exportExcel">
-            Export Excel
+            class="px-3 py-1.5 text-sm rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow disabled:opacity-50 flex items-center gap-2"
+            :disabled="isFetching || isExporting" @click="exportExcel">
+            <svg v-if="isExporting" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor"
+                d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+              </path>
+            </svg>
+            {{ isExporting ? 'Exporting...' : 'Export Excel' }}
           </button>
         </div>
       </div>
@@ -200,7 +329,7 @@ function exportExcel() {
       </div>
 
       <!-- Table -->
-      <div v-else class="overflow-x-auto rounded-xl border border-gray-200 max-h-[400px] overflow-y-auto max-h-[400px] overflow-y-auto">
+      <div v-else class="overflow-x-auto rounded-xl border border-gray-200 max-h-[400px] overflow-y-auto">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50 text-nowrap ">
             <tr class="text-sm font-semibold text-gray-600">
@@ -235,9 +364,11 @@ function exportExcel() {
               <td class="px-3 py-2 border-r border-gray-200">{{ r.no }}</td>
               <td class="px-3 py-2 border-r border-gray-200">{{ r.jenis_pabean }}</td>
               <td class="px-3 py-2 border-r border-gray-200">{{ r.no_pabean }}</td>
-              <td class="px-3 py-2 border-r border-gray-200">{{ r.tgl_pabean ? dayjs(r.tgl_pabean).format('DD-MM-YYYY') : '-' }}</td>
+              <td class="px-3 py-2 border-r border-gray-200">{{ r.tgl_pabean ? dayjs(r.tgl_pabean).format('DD-MM-YYYY')
+                : '-' }}</td>
               <td class="px-3 py-2 border-r border-gray-200">{{ r.no_bukti }}</td>
-              <td class="px-3 py-2 border-r border-gray-200 text-nowrap">{{ r.tgl_bukti ? dayjs(r.tgl_bukti).format('DD-MM-YYYY') : '-' }}</td>
+              <td class="px-3 py-2 border-r border-gray-200 text-nowrap">{{ r.tgl_bukti ?
+                dayjs(r.tgl_bukti).format('DD-MM-YYYY') : '-' }}</td>
               <td class="px-3 py-2 border-r border-gray-200">{{ r.pengirim_barang }}</td>
               <td class="px-3 py-2 border-r border-gray-200">{{ r.kode_barang }}</td>
               <td class="px-3 py-2 border-r border-gray-200">{{ r.nama_barang }}</td>
@@ -271,11 +402,46 @@ function exportExcel() {
             </div>
           </div>
         </div>
-        <div class="inline-flex rounded-lg overflow-hidden border border-gray-200">
-          <button class="px-3 py-1 text-sm hover:bg-gray-50 disabled:opacity-50" :disabled="!hasPrev"
-            @click="goPage(page - 1)">Prev</button>
+        <div class="inline-flex rounded-lg overflow-hidden border border-gray-200 bg-white">
+          <!-- Previous Button -->
+          <button class="px-3 py-1 text-sm hover:bg-gray-50 disabled:opacity-50 border-r border-gray-200"
+            :disabled="!hasPrev" @click="goPage(page - 1)">
+            Prev
+          </button>
+
+          <!-- First Page -->
+          <button v-if="page > 3" class="px-3 py-1 text-sm hover:bg-gray-50 border-r border-gray-200"
+            @click="goPage(1)">
+            1
+          </button>
+
+          <!-- Ellipsis before current range -->
+          <span v-if="page > 4" class="px-3 py-1 text-sm text-gray-400 border-r border-gray-200">...</span>
+
+          <!-- Page numbers around current page (-2 to +2) -->
+          <template v-for="pageNum in visiblePages" :key="pageNum">
+            <button class="px-3 py-1 text-sm border-r border-gray-200 transition-colors duration-200" :class="{
+              'bg-blue-500 text-white hover:bg-blue-600': pageNum === page,
+              'hover:bg-gray-50 text-gray-700': pageNum !== page
+            }" @click="goPage(pageNum)">
+              {{ pageNum }}
+            </button>
+          </template>
+
+          <!-- Ellipsis after current range -->
+          <span v-if="page < totalPages - 3" class="px-3 py-1 text-sm text-gray-400 border-r border-gray-200">...</span>
+
+          <!-- Last Page -->
+          <button v-if="page < totalPages - 2" class="px-3 py-1 text-sm hover:bg-gray-50 border-r border-gray-200"
+            @click="goPage(totalPages)">
+            {{ totalPages }}
+          </button>
+
+          <!-- Next Button -->
           <button class="px-3 py-1 text-sm hover:bg-gray-50 disabled:opacity-50" :disabled="!hasNext"
-            @click="goPage(page + 1)">Next</button>
+            @click="goPage(page + 1)">
+            Next
+          </button>
         </div>
       </div>
     </div>

@@ -243,7 +243,7 @@ const clearItemName = () => {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '/@src/scss/abstracts/all';
 
 .sales-dashboard {
@@ -292,6 +292,8 @@ const clearItemName = () => {
         font-family: var(--font);
         color: var(--light-text);
       }
+
+      
     }
   }
 

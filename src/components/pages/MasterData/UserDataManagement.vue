@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useToast } from 'primevue/usetoast'
 import dayjs from 'dayjs'
+import DatePicker from 'primevue/datepicker';
 
 /**
  * Properties
@@ -338,7 +339,7 @@ onMounted(() => {
 </template>
 
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '/@src/scss/abstracts/all';
 
 .sales-dashboard {
@@ -387,6 +388,8 @@ onMounted(() => {
         font-family: var(--font);
         color: var(--light-text);
       }
+
+      
     }
   }
 

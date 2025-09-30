@@ -109,7 +109,8 @@ function defaultFileName() {
   return `Products_Purchase_${ymd}.xlsx`
 }
 
-function exportExcel() {
+async function exportExcel() {
+  isExporting.value = true
   const data = sorted.value
   if (!data.length) return
 

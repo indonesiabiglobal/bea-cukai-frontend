@@ -185,7 +185,7 @@ const clearNamaUser = () => {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '/@src/scss/abstracts/all';
 
 .sales-dashboard {
@@ -234,6 +234,8 @@ const clearNamaUser = () => {
         font-family: var(--font);
         color: var(--light-text);
       }
+
+      
     }
   }
 

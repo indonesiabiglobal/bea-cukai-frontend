@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useToast } from 'primevue/usetoast'
 import dayjs from 'dayjs'
+import DatePicker from 'primevue/datepicker';
 
 /**
  * Properties
@@ -171,7 +172,7 @@ const clearItemName = () => {
           </div>
           <div>
             <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                Laporan Pertanggung Jawaban Mutasi Barang Jadi
+              Laporan Pertanggung Jawaban Mutasi Barang Jadi
             </h3>
             <p class="text-gray-600 text-sm font-medium">Filter data berdasarkan periode dan kriteria yang dipilih</p>
           </div>
@@ -186,27 +187,19 @@ const clearItemName = () => {
                 <label class="block text-xs font-semibold text-gray-700 mb-0 uppercase tracking-wide me-2">Range
                   Date:</label>
                 <div class="booking-bar col-span-2">
-                  <ClientOnly>
-                    <VDatePicker v-model.range="filterRange" color="green" trim-weeks show-weeknumbers
-                      :first-day-of-week="2">
-                      <template #default="{ inputValue, inputEvents }">
-                        <div class="booking-bar-inputs">
-                          <VControl icon="lucide:calendar">
-                            <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-                             focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
-                             hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="Start"
-                              :value="inputValue.start" v-on="inputEvents.start">
-                          </VControl>
-                          <VControl icon="lucide:calendar">
-                            <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-                             focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
-                             hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="End"
-                              :value="inputValue.end" v-on="inputEvents.end">
-                          </VControl>
-                        </div>
-                      </template>
-                    </VDatePicker>
-                  </ClientOnly>
+                  <div class="booking-bar-inputs">
+                    <VControl class="control mr-4">
+                      <DatePicker v-model="filterRange.start" dateFormat="dd-mm-yy"
+                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                        appendTo="body" placeholder="Start" />
+                    </VControl>
+
+                    <VControl class="control">
+                      <DatePicker v-model="filterRange.end" dateFormat="dd-mm-yy"
+                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                        appendTo="body" placeholder="End" />
+                    </VControl>
+                  </div>
                 </div>
               </div>
 
@@ -219,8 +212,8 @@ const clearItemName = () => {
                 </div>
 
                 <div class="relative">
-                  <input type="text" v-model="itemCode" @input="handleFilterChange"
-                    placeholder="Masukkan Kode Barang" class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                  <input type="text" v-model="itemCode" @input="handleFilterChange" placeholder="Masukkan Kode Barang"
+                    class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
                            focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
                            hover:border-gray-300 appearance-none cursor-text shadow-sm" aria-label="Kode Barang" />
 
@@ -243,8 +236,8 @@ const clearItemName = () => {
                 </div>
 
                 <div class="relative">
-                  <input type="text" v-model="itemName" @input="handleFilterChange"
-                    placeholder="Masukkan Nama Barang" class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                  <input type="text" v-model="itemName" @input="handleFilterChange" placeholder="Masukkan Nama Barang"
+                    class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
                            focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
                            hover:border-gray-300 appearance-none cursor-text shadow-sm" aria-label="Nama Barang" />
 
@@ -275,11 +268,13 @@ const clearItemName = () => {
       </div>
     </div>
     <FinishedProductReportTable :items="finishedProducts" :isFetching="isFetchingReport" :page="page" :limit="limit"
-      :total="total" :hasNext="hasNext" :hasPrev="hasPrev" :totalPages="totalPages" @change-page="handleChangePage" @change-limit="handleChangeLimit" />
+      :total="total" :hasNext="hasNext" :hasPrev="hasPrev" :totalPages="totalPages" :filterRange="filterRange"
+      :itemCode="itemCode" :itemName="itemName" @change-page="handleChangePage"
+      @change-limit="handleChangeLimit" />
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '/@src/scss/abstracts/all';
 
 .sales-dashboard {
@@ -328,6 +323,8 @@ const clearItemName = () => {
         font-family: var(--font);
         color: var(--light-text);
       }
+
+      
     }
   }
 

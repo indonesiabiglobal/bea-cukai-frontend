@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
+import { RouterLink } from 'vue-router';
 import * as XLSX from 'xlsx'
 
 const useApi = useApiFetchV2();
@@ -126,171 +127,59 @@ const visiblePages = computed(() => {
 /* ========= EXPORT EXCEL ========= */
 const isExporting = ref(false)
 
-function autoColWidths(rows: any[], headers: string[]) {
-  const lens = headers.map(h => h.length)
-  for (const r of rows) {
-    headers.forEach((h, i) => {
-      const v = r[h]
-      const s = v == null ? '' : String(v)
-      lens[i] = Math.max(lens[i], s.length)
-    })
-  }
-  // approx width: char count + padding
-  return lens.map(ch => ({ wch: Math.min(Math.max(ch + 2, 8), 50) }))
-}
-
-const exportFileName = computed(() => {
-  const now = new Date()
-  const pad = (n: number) => String(n).padStart(2, '0')
-  const y = now.getFullYear()
-  const m = pad(now.getMonth() + 1)
-  const d = pad(now.getDate())
-  const hh = pad(now.getHours())
-  const mm = pad(now.getMinutes())
-  return `EntryProductReport_${y}${m}${d}_${hh}${mm}.xlsx`
-})
-
 async function exportExcel() {
   isExporting.value = true
-
-  // Fetch all data from API without pagination
-  let allData: EntryProduct[] = [];
-
   try {
-    const response = await useApi.get('report/entry-products', {
-      // Remove page and limit to get all data
-      from: props.filterRange?.start ? dayjs(props.filterRange.start).format('YYYY-MM-DD') : dayjs().startOf('month').format('YYYY-MM-DD'),
-      to: props.filterRange?.end ? dayjs(props.filterRange.end).format('YYYY-MM-DD') : dayjs().endOf('month').format('YYYY-MM-DD'),
-      pabeanType: props.selectedPabeanType || '',
-      productGroup: props.selectedProductGroup || '',
-      noPabean: props.noPabean || '',
-      productCode: props.productCode || '',
-      productName: props.productName || '',
-    }, false);
+    let filename = 'lap-pemasukan-barang.xlsx'
 
-    // Map API response to EntryProduct type
-    allData = response.data.map((item: any, idx: number): EntryProduct => ({
-      no: idx + 1,
-      jenis_pabean: item.jenis_pabean || '',
-      no_pabean: item.no_pabean || '',
-      tgl_pabean: item.tgl_pabean || '',
-      no_bukti: item.vend_dlv_no || '',
-      tgl_bukti: item.trans_date || '',
-      pengirim_barang: item.vendor_name || '',
-      kode_barang: item.item_code || '',
-      nama_barang: item.item_name || '',
-      jumlah: Number(item.rcv_qty) || 0,
-      sat: item.pch_unit || '',
-      valas: item.curr_code || null,
-      nilai: item.net_price || 0,
-      ket: '',
-    }));
-  } catch (error) {
-    console.error('Error fetching export data:', error);
-    // Fallback to current displayed data if API call fails
-    allData = sorted.value;
-  }
+    const data = await useApi.get(
+      'report/entry-products/export',
+      {
+        from: props.filterRange?.start
+          ? dayjs(props.filterRange.start).format('YYYY-MM-DD')
+          : dayjs().startOf('month').format('YYYY-MM-DD'),
+        to: props.filterRange?.end
+          ? dayjs(props.filterRange.end).format('YYYY-MM-DD')
+          : dayjs().endOf('month').format('YYYY-MM-DD'),
+        pabeanType: props.selectedPabeanType || '',
+        productGroup: props.selectedProductGroup || '',
+        noPabean: props.noPabean || '',
+        productCode: props.productCode || '',
+        productName: props.productName || '',
+      },
+      /* showToast */ false,
+      {
+        responseType: 'blob',
+        // optional tapi berguna untuk baca filename dari header
+        onResponse({ response }: { response: Response }) {
+          const cd = response.headers.get('content-disposition')
+          const m = cd && /filename\*=UTF-8''([^;]+)|filename="?([^"]+)"?/i.exec(cd)
+          if (m) filename = decodeURIComponent(m[1] || m[2])
+        },
+        headers: {
+          // opsional: hint ke server
+          Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,*/*'
+        }
+      }
+    )
 
-  if (!allData.length) {
+    // trigger download
+    const url = URL.createObjectURL(data) // data adalah Blob
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+    URL.revokeObjectURL(url)
+  } catch (err) {
+    // kalau server balas JSON error, blob bisa berisi pesan
+    console.error(err)
+  } finally {
     isExporting.value = false
-    return
   }
-
-  // Create workbook and worksheet with proper headers
-  // Create workbook
-  const wb = XLSX.utils.book_new()
-
-  // Create worksheet with proper structure
-  const ws = XLSX.utils.aoa_to_sheet([])
-
-  // Add header information
-  const currentDate = new Date()
-  const dateStr = currentDate.toLocaleDateString('id-ID')
-
-  // Header rows
-  XLSX.utils.sheet_add_aoa(ws, [
-    ['LAPORAN PENERIMAAN BARANG PER DOKUMEN PABEAN'],
-    ['PT FUKUSUKE KOGYO INDONESIA'],
-    [`PERIODE : ${dateStr}`],
-    [], // Empty row
-    // Main header with merged cells structure
-    ['No.', 'DOKUMEN PABEAN', '', '', 'BUKTI PENERIMAAN BARANG', '', 'PENGIRIM', 'KODE', 'NAMA', 'JUMLAH', 'SATUAN', 'VALAS', 'NILAI'],
-    ['', 'JENIS', 'NOMOR', 'TANGGAL', 'NOMOR', 'TANGGAL', 'BARANG', 'BARANG', 'BARANG', '', '', '', '']
-  ], { origin: 'A1' })
-
-  // Add data rows starting from row 7
-  const dataRows = allData.map((r, index) => [
-    index + 1,
-    r.jenis_pabean || '',
-    r.no_pabean || '',
-    r.tgl_pabean ? dtf.format(new Date(r.tgl_pabean)) : '',
-    r.no_bukti || '',
-    r.tgl_bukti ? dtf.format(new Date(r.tgl_bukti)) : '',
-    r.pengirim_barang || '',
-    r.kode_barang || '',
-    r.nama_barang || '',
-    toNum(r.jumlah),
-    r.sat || '',
-    r.valas || '',
-    toNum(r.nilai)
-  ])
-
-  XLSX.utils.sheet_add_aoa(ws, dataRows, { origin: 'A7' })
-
-  // Merge cells for headers
-  const merges = [
-    { s: { c: 0, r: 0 }, e: { c: 12, r: 0 } }, // Title row
-    { s: { c: 0, r: 1 }, e: { c: 12, r: 1 } }, // Company row
-    { s: { c: 0, r: 2 }, e: { c: 12, r: 2 } }, // Period row
-    // Main header merges
-    { s: { c: 0, r: 4 }, e: { c: 0, r: 5 } }, // No. column
-    { s: { c: 1, r: 4 }, e: { c: 3, r: 4 } }, // DOKUMEN PABEAN
-    { s: { c: 4, r: 4 }, e: { c: 5, r: 4 } }, // BUKTI PENERIMAAN BARANG
-    { s: { c: 6, r: 4 }, e: { c: 6, r: 5 } }, // PENGIRIM BARANG
-    { s: { c: 7, r: 4 }, e: { c: 7, r: 5 } }, // KODE BARANG
-    { s: { c: 8, r: 4 }, e: { c: 8, r: 5 } }, // NAMA BARANG
-    { s: { c: 9, r: 4 }, e: { c: 9, r: 5 } }, // JUMLAH
-    { s: { c: 10, r: 4 }, e: { c: 10, r: 5 } }, // SATUAN
-    { s: { c: 11, r: 4 }, e: { c: 11, r: 5 } }, // VALAS
-    { s: { c: 12, r: 4 }, e: { c: 12, r: 5 } }, // NILAI
-  ]
-
-  ws['!merges'] = merges
-
-  // Set column widths
-  const colWidths = [
-    { wch: 5 },   // No
-    { wch: 12 },  // Jenis
-    { wch: 15 },  // No Pabean
-    { wch: 12 },  // Tgl Pabean
-    { wch: 15 },  // No Bukti
-    { wch: 12 },  // Tgl Bukti
-    { wch: 20 },  // Pengirim
-    { wch: 15 },  // Kode Barang
-    { wch: 25 },  // Nama Barang
-    { wch: 10 },  // Jumlah
-    { wch: 8 },   // Satuan
-    { wch: 8 },   // Valas
-    { wch: 15 },  // Nilai
-  ]
-  ws['!cols'] = colWidths
-
-  // Set row heights for better appearance
-  if (!ws['!rows']) ws['!rows'] = []
-  ws['!rows'][0] = { hpt: 25 } // Title row height
-  ws['!rows'][1] = { hpt: 20 } // Company row height
-  ws['!rows'][2] = { hpt: 20 } // Period row height
-  ws['!rows'][4] = { hpt: 25 } // Header row height
-  ws['!rows'][5] = { hpt: 25 } // Sub-header row height
-
-  // Add worksheet to workbook
-  XLSX.utils.book_append_sheet(wb, ws, 'Laporan Pemasukan Barang')
-
-  // Save file
-  XLSX.writeFile(wb, exportFileName.value)
-
-  isExporting.value = false
 }
+
 </script>
 
 <template>
@@ -310,9 +199,7 @@ async function exportExcel() {
             :disabled="isFetching || isExporting" @click="exportExcel">
             <svg v-if="isExporting" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor"
-                d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-              </path>
+              <path class="opacity-75" fill="currentColor" d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
             {{ isExporting ? 'Exporting...' : 'Export Excel' }}
           </button>

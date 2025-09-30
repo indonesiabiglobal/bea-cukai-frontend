@@ -162,7 +162,8 @@ const exportFileName = computed(() => {
 	return `DischargedPatients_${y}${m}${d}_${hh}${mm}.xlsx`
 })
 
-function exportExcel() {
+async function exportExcel() {
+  isExporting.value = true
 	const data = sorted.value
 	if (!data.length) return
 

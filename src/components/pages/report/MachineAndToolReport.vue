@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useToast } from 'primevue/usetoast'
 import dayjs from 'dayjs'
+import DatePicker from 'primevue/datepicker';
 
 /**
  * Properties
@@ -168,12 +169,13 @@ const clearItemName = () => {
         <div class="flex items-center space-x-4">
           <div class="p-3 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg">
             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
             </svg>
           </div>
           <div>
             <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                Laporan Pertanggung Jawaban Mutasi Mesin dan Peralatan
+              Laporan Pertanggung Jawaban Mutasi Mesin dan Peralatan
             </h3>
             <p class="text-gray-600 text-sm font-medium">Filter data berdasarkan periode dan kriteria yang dipilih</p>
           </div>
@@ -188,27 +190,19 @@ const clearItemName = () => {
                 <label class="block text-xs font-semibold text-gray-700 mb-0 uppercase tracking-wide me-2">Range
                   Date:</label>
                 <div class="booking-bar col-span-2">
-                  <ClientOnly>
-                    <VDatePicker v-model.range="filterRange" color="blue" trim-weeks show-weeknumbers
-                      :first-day-of-week="2">
-                      <template #default="{ inputValue, inputEvents }">
-                        <div class="booking-bar-inputs">
-                          <VControl icon="lucide:calendar">
-                            <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-                             focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
-                             hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="Start"
-                              :value="inputValue.start" v-on="inputEvents.start">
-                          </VControl>
-                          <VControl icon="lucide:calendar">
-                            <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-                             focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
-                             hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="End"
-                              :value="inputValue.end" v-on="inputEvents.end">
-                          </VControl>
-                        </div>
-                      </template>
-                    </VDatePicker>
-                  </ClientOnly>
+                  <div class="booking-bar-inputs">
+                    <VControl class="control mr-4">
+                      <DatePicker v-model="filterRange.start" dateFormat="dd-mm-yy"
+                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                        appendTo="body" placeholder="Start" />
+                    </VControl>
+
+                    <VControl class="control">
+                      <DatePicker v-model="filterRange.end" dateFormat="dd-mm-yy"
+                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                        appendTo="body" placeholder="End" />
+                    </VControl>
+                  </div>
                 </div>
               </div>
 
@@ -221,8 +215,8 @@ const clearItemName = () => {
                 </div>
 
                 <div class="relative">
-                  <input type="text" v-model="itemCode" @input="handleFilterChange"
-                    placeholder="Masukkan Kode Item" class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                  <input type="text" v-model="itemCode" @input="handleFilterChange" placeholder="Masukkan Kode Item"
+                    class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
                            focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
                            hover:border-gray-300 appearance-none cursor-text shadow-sm" aria-label="Kode Item" />
 
@@ -245,8 +239,8 @@ const clearItemName = () => {
                 </div>
 
                 <div class="relative">
-                  <input type="text" v-model="itemName" @input="handleFilterChange"
-                    placeholder="Masukkan Nama Item" class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                  <input type="text" v-model="itemName" @input="handleFilterChange" placeholder="Masukkan Nama Item"
+                    class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
                            focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
                            hover:border-gray-300 appearance-none cursor-text shadow-sm" aria-label="Nama Item" />
 
@@ -277,11 +271,13 @@ const clearItemName = () => {
       </div>
     </div>
     <MachineAndToolReportTable :items="machineAndTools" :isFetching="isFetchingReport" :page="page" :limit="limit"
-      :total="total" :hasNext="hasNext" :hasPrev="hasPrev" :totalPages="totalPages" @change-page="handleChangePage" @change-limit="handleChangeLimit" />
+      :total="total" :hasNext="hasNext" :hasPrev="hasPrev" :totalPages="totalPages" :filterRange="filterRange"
+      :itemCode="itemCode" :itemName="itemName" @change-page="handleChangePage"
+      @change-limit="handleChangeLimit" />
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '/@src/scss/abstracts/all';
 
 .sales-dashboard {
@@ -330,6 +326,8 @@ const clearItemName = () => {
         font-family: var(--font);
         color: var(--light-text);
       }
+
+      
     }
   }
 

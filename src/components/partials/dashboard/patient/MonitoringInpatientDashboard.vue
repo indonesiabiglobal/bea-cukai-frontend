@@ -131,6 +131,7 @@ function goPage(p: number) {
 }
 
 /* ========= EXPORT EXCEL ========= */
+const isExporting = ref(false)
 function autoColWidths(rows: any[], headers: string[]) {
   const lens = headers.map(h => h.length)
   for (const r of rows) {
@@ -156,7 +157,8 @@ const exportFileName = computed(() => {
   return `InpatientMonitoring_${y}${m}${d}_${hh}${mm}.xlsx`
 })
 
-function exportExcel() {
+async function exportExcel() {
+  isExporting.value = true
   const data = sorted.value
   if (!data.length) return
 
@@ -212,6 +214,8 @@ function exportExcel() {
   XLSX.utils.book_append_sheet(wb, wsSummary, 'Summary')
   XLSX.utils.book_append_sheet(wb, ws, 'Inpatients')
   XLSX.writeFile(wb, exportFileName.value)
+
+  isExporting.value = false
 }
 </script>
 

@@ -116,7 +116,7 @@ onMounted(() => {
   </div>
 </template>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '/@src/scss/abstracts/all';
 @import '/@src/scss/components/forms-outer';
 

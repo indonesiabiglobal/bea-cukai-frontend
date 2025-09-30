@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import dayjs from 'dayjs';
-import * as XLSX from 'xlsx'
+const useApi = useApiFetchV2();
 
 /** Samakan dengan payload backend */
 const props = withDefaults(defineProps<{
@@ -13,6 +13,10 @@ const props = withDefaults(defineProps<{
     hasNext?: boolean
     hasPrev?: boolean
     totalPages?: number
+    filterRange?: { start: Date, end: Date }
+    itemCode?: string
+    itemName?: string
+    lap?: string
 }>(), {
     page: 1,
     limit: 20,
@@ -20,6 +24,9 @@ const props = withDefaults(defineProps<{
     hasNext: false,
     hasPrev: false,
     totalPages: 1,
+    itemCode: '',
+    itemName: '',
+    lap: 'Gaiso'
 })
 
 /** Emit ke parent kalau page berubah (server-side pagination) */
@@ -102,79 +109,57 @@ const visiblePages = computed(() => {
 })
 
 /* ========= EXPORT EXCEL ========= */
-function autoColWidths(rows: any[], headers: string[]) {
-    const lens = headers.map(h => h.length)
-    for (const r of rows) {
-        headers.forEach((h, i) => {
-            const v = r[h]
-            const s = v == null ? '' : String(v)
-            lens[i] = Math.max(lens[i], s.length)
-        })
+const isExporting = ref(false)
+
+async function exportExcel() {
+    isExporting.value = true
+    try {
+        let filename = 'lap-bahan-penolong-gaiso.xlsx'
+
+        const data = await useApi.get(
+            'auxiliary-material/export',
+            {
+                from: props.filterRange?.start
+                    ? dayjs(props.filterRange.start).format('YYYY-MM-DD')
+                    : dayjs().startOf('month').format('YYYY-MM-DD'),
+                to: props.filterRange?.end
+                    ? dayjs(props.filterRange.end).format('YYYY-MM-DD')
+                    : dayjs().endOf('month').format('YYYY-MM-DD'),
+                itemCode: props.itemCode || '',
+                itemName: props.itemName || '',
+                lap: props.lap || 'Gaiso'
+            },
+      /* showToast */ false,
+            {
+                responseType: 'blob',
+                // optional tapi berguna untuk baca filename dari header
+                onResponse({ response }: { response: Response }) {
+                    const cd = response.headers.get('content-disposition')
+                    const m = cd && /filename\*=UTF-8''([^;]+)|filename="?([^"]+)"?/i.exec(cd)
+                    if (m) filename = decodeURIComponent(m[1] || m[2])
+                },
+                headers: {
+                    // opsional: hint ke server
+                    Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,*/*'
+                }
+            }
+        )
+
+        // trigger download
+        const url = URL.createObjectURL(data) // data adalah Blob
+        const a = document.createElement('a')
+        a.href = url
+        a.download = filename
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+        URL.revokeObjectURL(url)
+    } catch (err) {
+        // kalau server balas JSON error, blob bisa berisi pesan
+        console.error(err)
+    } finally {
+        isExporting.value = false
     }
-    // approx width: char count + padding
-    return lens.map(ch => ({ wch: Math.min(Math.max(ch + 2, 8), 50) }))
-}
-
-const exportFileName = computed(() => {
-    const now = new Date()
-    const pad = (n: number) => String(n).padStart(2, '0')
-    const y = now.getFullYear()
-    const m = pad(now.getMonth() + 1)
-    const d = pad(now.getDate())
-    const hh = pad(now.getHours())
-    const mm = pad(now.getMinutes())
-    return `GaisoMaterialsReport_${y}${m}${d}_${hh}${mm}.xlsx`
-})
-
-function exportExcel() {
-    const data = sorted.value
-    if (!data.length) return
-
-    // Map ke bentuk tabular "rapi"
-    const headers = [
-        'Kode Barang',
-        'Nama Barang',
-        'Grup Item',
-        'Tipe Item',
-        'Kode Lokasi',
-        'Kode Unit',
-        'Saldo Awal',
-        'Masuk',
-        'Keluar',
-        'Opname',
-        'Penyesuaian',
-        'Selisih',
-        'Saldo Akhir',
-    ]
-
-    const rows = data.map((r, index) => {
-        return {
-            'Kode Barang': r.item_code || '',
-            'Nama Barang': r.item_name || '',
-            'Grup Item': r.item_group || '',
-            'Tipe Item': r.item_type_code || '',
-            'Kode Lokasi': r.location_code || '',
-            'Kode Unit': r.unit_code || '',
-            'Saldo Awal': toNum(r.awal),
-            'Masuk': toNum(r.masuk),
-            'Keluar': toNum(r.keluar),
-            'Opname': toNum(r.opname),
-            'Penyesuaian': toNum(r.peny),
-            'Selisih': toNum(r.selisih),
-            'Saldo Akhir': toNum(r.akhir),
-        }
-    })
-
-    // Worksheet utama
-    const ws = XLSX.utils.json_to_sheet(rows, { header: headers })
-
-    // Auto column width
-    ws['!cols'] = autoColWidths(rows, headers)
-
-    // Workbook & save
-    const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, 'GaisoMaterials')
-    XLSX.writeFile(wb, exportFileName.value)
 }
 </script>
 
@@ -191,9 +176,16 @@ function exportExcel() {
                 <div class="flex items-center gap-2 w-full lg:w-auto">
                     <!-- Tombol Export -->
                     <button
-                        class="px-3 py-1.5 text-sm rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow disabled:opacity-50"
-                        :disabled="isFetching || !sorted.length" @click="exportExcel">
-                        Export Excel
+                        class="px-3 py-1.5 text-sm rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow disabled:opacity-50 flex items-center gap-2"
+                        :disabled="isFetching || isExporting" @click="exportExcel">
+                        <svg v-if="isExporting" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        {{ isExporting ? 'Exporting...' : 'Export Excel' }}
                     </button>
                 </div>
             </div>
@@ -210,7 +202,7 @@ function exportExcel() {
             <!-- Table -->
             <div v-else class="overflow-x-auto rounded-xl border border-gray-200 max-h-[400px] overflow-y-auto">
                 <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50 text-nowrap">
+                    <thead class="bg-gray-50 text-nowrap sticky top-0 z-10">
                         <tr class="text-sm font-semibold text-gray-600">
                             <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">No</th>
                             <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">

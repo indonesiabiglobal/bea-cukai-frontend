@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useToast } from 'primevue/usetoast'
 import dayjs from 'dayjs'
+import DatePicker from 'primevue/datepicker';
 
 /**
  * Properties
@@ -255,27 +256,19 @@ const clearProductName = () => {
                 <label class="block text-xs font-semibold text-gray-700 mb-0 uppercase tracking-wide me-2">Range
                   Date:</label>
                 <div class="booking-bar col-span-2">
-                  <ClientOnly>
-                    <VDatePicker v-model.range="filterRange" color="green" trim-weeks show-weeknumbers
-                      :first-day-of-week="2">
-                      <template #default="{ inputValue, inputEvents }">
-                        <div class="booking-bar-inputs">
-                          <VControl icon="lucide:calendar">
-                            <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-                             focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
-                             hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="Start"
-                              :value="inputValue.start" v-on="inputEvents.start">
-                          </VControl>
-                          <VControl icon="lucide:calendar">
-                            <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-                             focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
-                             hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="End"
-                              :value="inputValue.end" v-on="inputEvents.end">
-                          </VControl>
-                        </div>
-                      </template>
-                    </VDatePicker>
-                  </ClientOnly>
+                  <div class="booking-bar-inputs">
+                    <VControl class="control mr-4">
+                      <DatePicker v-model="filterRange.start" dateFormat="dd-mm-yy"
+                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                        appendTo="body" placeholder="Start" />
+                    </VControl>
+
+                    <VControl class="control">
+                      <DatePicker v-model="filterRange.end" dateFormat="dd-mm-yy"
+                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                        appendTo="body" placeholder="End" />
+                    </VControl>
+                  </div>
                 </div>
               </div>
               <!-- Jenis Pabean -->
@@ -441,7 +434,10 @@ const clearProductName = () => {
       </div>
     </div>
     <ExpenditureProductReportTable :items="expenditureProducts" :isFetching="isFetchingReport" :page="page" :limit="limit"
-      :total="total" :hasNext="hasNext" :hasPrev="hasPrev" :totalPages="totalPages" @change-page="handleChangePage" @change-limit="handleChangeLimit" />
+      :total="total" :hasNext="hasNext" :hasPrev="hasPrev" :totalPages="totalPages" :filterRange="filterRange"
+      :selectedPabeanType="selectedPabeanType" :selectedProductGroup="selectedProductGroup" :noPabean="noPabean"
+      :productCode="productCode" :productName="productName" @change-page="handleChangePage"
+      @change-limit="handleChangeLimit" />
   </div>
 </template>
 
@@ -494,6 +490,8 @@ const clearProductName = () => {
         font-family: var(--font);
         color: var(--light-text);
       }
+
+      
     }
   }
 

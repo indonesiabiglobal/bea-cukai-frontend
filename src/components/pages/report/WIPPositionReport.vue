@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useToast } from 'primevue/usetoast'
 import dayjs from 'dayjs'
+import DatePicker from 'primevue/datepicker';
 
 /**
  * Properties
@@ -217,21 +218,13 @@ const clearProductName = () => {
               <div class="filter-group w-full col-span-2">
                 <label class="block text-xs font-semibold text-gray-700 mb-0 uppercase tracking-wide me-2">Tanggal:</label>
                 <div class="booking-bar col-span-2">
-                  <ClientOnly>
-                    <VDatePicker v-model="startDate" color="green" trim-weeks show-weeknumbers
-                      :first-day-of-week="2">
-                      <template #default="{ inputValue, inputEvents }">
-                        <div class="booking-bar-inputs">
-                          <VControl icon="lucide:calendar">
-                            <input type="text" class="w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-                             focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
-                             hover:border-gray-300 appearance-none cursor-pointer shadow-sm" placeholder="Pilih Tanggal"
-                              :value="inputValue" v-on="inputEvents">
-                          </VControl>
-                        </div>
-                      </template>
-                    </VDatePicker>
-                  </ClientOnly>
+                  <div class="booking-bar-inputs">
+                    <VControl class="control">
+                      <DatePicker v-model="startDate" dateFormat="dd-mm-yy"
+                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                        appendTo="body" placeholder="Start" />
+                    </VControl>
+                  </div>
                 </div>
               </div>
               <!-- Kode Barang -->
@@ -352,6 +345,8 @@ const clearProductName = () => {
         font-family: var(--font);
         color: var(--light-text);
       }
+
+      
     }
   }
 

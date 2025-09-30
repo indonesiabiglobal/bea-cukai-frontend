@@ -30,10 +30,6 @@ export default definePlugin(async ({ router, pinia, event }) => {
     const userSession = useUserSession(pinia)
     const token = useUserToken(event)
     const $fetch = useApiFetch(event)
-    console.log('====================================');
-    console.log(userSession.user);
-    console.log(token.value);
-    console.log('====================================');
 
     if (token.value && !userSession.user) {
       try {

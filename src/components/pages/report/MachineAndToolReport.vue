@@ -162,7 +162,7 @@ const clearItemName = () => {
   <div class="sales-dashboard">
     <!--Header-->
     <div
-      class="dashboard-header  bg-gradient-to-r from-white via-gray-50 to-white backdrop-blur-sm border border-gray-200/60 shadow-xl rounded-3xl p-5 mt-4">
+      class="dashboard-header  bg-gradient-to-r from-white via-gray-50 to-white backdrop-blur-sm border border-gray-200/60 shadow-xl rounded-3xl p-5 mt-5">
       <div class="flex flex-col lg:justify-between gap-6 w-full">
 
         <!-- Header Info Section -->

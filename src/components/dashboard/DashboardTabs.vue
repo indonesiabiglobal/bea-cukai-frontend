@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, provide, shallowRef } from 'vue'
 import { availableMenus, type MenuItem } from '../../data/apps/menu'
 
 interface TabItem {
@@ -195,7 +194,7 @@ onUnmounted(() => {
           <!-- Welcome Header -->
           <div class="bg-white rounded-xl p-8 text-gray-800 mb-8">
             <!-- icon pabrik -->
-            
+
             <h1 class="text-3xl font-bold mb-2">🏭 Selamat Datang di Fukusuke Kogyo Indonesia</h1>
             <p class="text-lg opacity-90">Pilih report dari menu untuk memulai</p>
           </div>
@@ -225,7 +224,7 @@ onUnmounted(() => {
           </div>
 
           <!-- Recent Activity -->
-          <div class="card">
+          <!-- <div class="card">
             <div class="card-content p-6">
               <h3 class="text-xl font-bold text-gray-800 mb-4">📊 Menu Overview</h3>
               <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -247,7 +246,7 @@ onUnmounted(() => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
 
         </div>
       </div>
@@ -376,6 +375,7 @@ onUnmounted(() => {
 .tab-content {
   flex: 1;
   overflow: hidden;
+  min-height: 95vh;
 }
 
 // Dark mode support

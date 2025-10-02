@@ -35,7 +35,7 @@ const props = withDefaults(defineProps<{
   }
 
   .page-content {
-    padding: 0 40px;
+    padding: 0 32px;
 
     &.is-relative {
       position: relative;

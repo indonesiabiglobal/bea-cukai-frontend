@@ -222,32 +222,6 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
-
-          <!-- Recent Activity -->
-          <!-- <div class="card">
-            <div class="card-content p-6">
-              <h3 class="text-xl font-bold text-gray-800 mb-4">📊 Menu Overview</h3>
-              <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="text-center">
-                  <div class="text-2xl font-bold text-blue-600 mb-1">5</div>
-                  <div class="text-sm text-gray-600">Available Menus</div>
-                </div>
-                <div class="text-center">
-                  <div class="text-2xl font-bold text-green-600 mb-1">{{ tabs.length }}</div>
-                  <div class="text-sm text-gray-600">Open Tabs</div>
-                </div>
-                <div class="text-center">
-                  <div class="text-2xl font-bold text-purple-600 mb-1">Real-time</div>
-                  <div class="text-sm text-gray-600">Data Updates</div>
-                </div>
-                <div class="text-center">
-                  <div class="text-2xl font-bold text-orange-600 mb-1">24/7</div>
-                  <div class="text-sm text-gray-600">Monitoring</div>
-                </div>
-              </div>
-            </div>
-          </div> -->
-
         </div>
       </div>
 

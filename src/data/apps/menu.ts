@@ -25,6 +25,30 @@ export interface MenuItem {
 }
 
 export const availableMenus: MenuItem[] = [
+
+  /** Data Master */
+  // user
+  {
+    label: 'Data User',
+    icon: 'lnil lnil-users',
+    path: '/data-master/user',
+    component: markRaw(MasterDataUser),
+    description: 'Manage user accounts and permissions',
+    bgColor: 'bg-blue-500',
+    groupMenu: 'Data Master'
+  },
+  // Data Product
+  {
+    label: 'Data Barang',
+    icon: 'lnil lnil-package',
+    path: '/data-master/product',
+    component: markRaw(MasterDataProduct),
+    description: 'Manage product information and inventory',
+    bgColor: 'bg-green-500',
+    groupMenu: 'Data Master'
+  },
+
+  /** Report */
   {
     label: 'Pemasukan Barang',
     icon: 'lnil lnil-user',
@@ -87,28 +111,6 @@ export const availableMenus: MenuItem[] = [
     description: 'Monitor reject and scrap product inventory',
     bgColor: 'bg-red-500',
     groupMenu: 'Report'
-  },
-
-  /** Data Master */
-  // user
-  {
-    label: 'Data User',
-    icon: 'lnil lnil-users',
-    path: '/data-master/user',
-    component: markRaw(MasterDataUser),
-    description: 'Manage user accounts and permissions',
-    bgColor: 'bg-blue-500',
-    groupMenu: 'Data Master'
-  },
-  // Data Product
-  {
-    label: 'Data Barang',
-    icon: 'lnil lnil-package',
-    path: '/data-master/product',
-    component: markRaw(MasterDataProduct),
-    description: 'Manage product information and inventory',
-    bgColor: 'bg-green-500',
-    groupMenu: 'Data Master'
   },
 
   /** Auxiliary Materials */

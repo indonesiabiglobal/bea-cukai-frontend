@@ -7,9 +7,25 @@ export function useApiFetchV2(event?: H3Event) {
   const token = useUserToken(event);
   const toast = useToast();
 
+  function isPrivateIp(host: string) {
+    if (host === 'localhost' || host === '127.0.0.1') return true;
+    const m = host.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
+    if (!m) return false;
+    const a = +m[1], b = +m[2];
+    if (a === 10) return true;
+    if (a === 192 && b === 168) return true;
+    if (a === 172 && b >= 16 && b <= 31) return true;
+    return false;
+  }
+  const useLocal = isPrivateIp(window.location.hostname);
+
+  const API_BASE_URL = useLocal
+    ? import.meta.env.VITE_API_BASE_URL_LOCAL
+    : import.meta.env.VITE_API_BASE_URL_PUBLIC;
+
   // Definisikan ofetch instance dengan konfigurasi global
   const api = ofetch.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000',
+    baseURL: API_BASE_URL ?? 'http://localhost:8000',
     headers: {
       'Accept': 'application/json',
     },
@@ -42,7 +58,7 @@ export function useApiFetchV2(event?: H3Event) {
       return response;
     } catch (error: any) {
       if (showToastOption) {
-        const errorMessage = error?.response?._data?.meta?.message || error.response._data.message ||   'Unknown error message';
+        const errorMessage = error?.response?._data?.meta?.message || error.response._data.message || 'Unknown error message';
 
         toast.add({
           severity: 'error',

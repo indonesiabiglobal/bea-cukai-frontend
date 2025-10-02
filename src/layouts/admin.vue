@@ -17,14 +17,34 @@ const handleDashboardClick = (path: string) => {
   }
 }
 
+const userSession = useUserSession()
+const router = useRouter()
+const useApi = useApiFetchV2()
+const token = useUserToken()
+const route = useRoute();
+const toaster = useToaster()
+
+const logout = async () => {
+  try {
+    await useApi.post('auth/logout', token.value).then(() => {
+      userSession.logoutUser();
+      router.push('/auth/login');
+    }).catch((error) => {
+      console.error('Error during logout API call:', error);
+      toaster.error('Logout failed. Please try again.');
+    });
+  } catch (error) {
+    toaster.error('Failed to logout');
+  }
+};
 const links = ref<SideblockItem[]>([
   {
     type: 'collapse',
-    label: 'Laporan',
-    id: 'report',
+    label: 'Data Master',
+    id: 'data-master',
     group: 'tab',
-    icon: 'mdi:hospital-building',
-    children: reportItems.map(item => ({
+    icon: 'mdi:database',
+    children: dataMasterItems.map(item => ({
       to: item.path,
       label: item.label,
       icon: item.icon,
@@ -33,11 +53,11 @@ const links = ref<SideblockItem[]>([
   },
   {
     type: 'collapse',
-    label: 'Data Master',
-    id: 'data-master',
+    label: 'Laporan',
+    id: 'report',
     group: 'tab',
-    icon: 'mdi:database',
-    children: dataMasterItems.map(item => ({
+    icon: 'mdi:hospital-building',
+    children: reportItems.map(item => ({
       to: item.path,
       label: item.label,
       icon: item.icon,
@@ -57,15 +77,19 @@ const links = ref<SideblockItem[]>([
       onClick: () => handleDashboardClick(item.path)
     })),
   },
+  // logout
+  {
+    type: 'action',
+    label: 'Logout',
+    id: 'logout',
+    icon: 'mdi:logout',
+    onClick: () => logout()
+  }
 ])
 </script>
 
 <template>
-  <SideblockLayout
-    :links
-    class="my-layout"
-    theme="curved"
-  >
+  <SideblockLayout :links class="my-layout" theme="curved">
     <!-- Propagating the context to the default slot -->
     <template #default="context">
       <slot v-bind="context" />

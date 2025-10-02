@@ -35,7 +35,7 @@ const logout = async () => {
         @keydown.enter.prevent="toggle"
         @click="toggle"
       >
-        <VAvatar picture="/images/avatars/svg/vuero-1.svg" />
+        <VAvatar picture="/images/logos/logo/fukusuke.svg" />
       </a>
     </template>
 
@@ -43,7 +43,7 @@ const logout = async () => {
       <div class="dropdown-head">
         <VAvatar
           size="large"
-          picture="/images/avatars/svg/vuero-1.svg"
+          picture="/images/logos/logo/fukusuke.svg"
         />
 
         <div class="meta">

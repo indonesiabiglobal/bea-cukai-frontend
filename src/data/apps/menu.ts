@@ -1,8 +1,6 @@
 import { markRaw } from 'vue'
 
 // Import dashboard components
-import InkManagement from '/@src/components/pages/AuxiliaryMaterial/InkManagement.vue'
-import GaisoManagement from '/@src/components/pages/AuxiliaryMaterial/GaisoManagement.vue'
 import RawMaterialReport from '/@src/components/pages/report/RawMaterialReport.vue'
 import WIPPositionReport from '/@src/components/pages/report/WIPPositionReport.vue'
 import EntryProductReport from '/@src/components/pages/report/EntryProductReport.vue'
@@ -20,8 +18,8 @@ export interface MenuItem {
   label: string
   icon: string
   path: string
-  component: any
-  description: string
+  component?: any
+  description?: string
   bgColor: string
   groupMenu?: string
 }

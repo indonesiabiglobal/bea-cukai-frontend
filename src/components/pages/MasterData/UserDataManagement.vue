@@ -302,7 +302,7 @@ onMounted(() => {
                 </VDatePicker>
               </ClientOnly>
             </div>
-            <!-- Apply Filter Button -->
+            <!-- Search Button -->
             <div class="filter-group w-full">
               <button @click="applyFilter" class="w-full px-6 py-3 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 
                          text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 
@@ -312,7 +312,7 @@ onMounted(() => {
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
                 </svg>
-                <span>Apply Filter</span>
+                <span>Search</span>
               </button>
             </div>
           </div>

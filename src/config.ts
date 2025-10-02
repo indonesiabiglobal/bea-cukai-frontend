@@ -1,6 +1,6 @@
 export default {
-    site_title: "Baghraf Health Care Hospital | Medical & Healthcare",
-    site_description: "Baghraf Health Care Hospital | Medical & Healthcare",
+    site_title: "Fukusuke Kogyo Indonesia",
+    site_description: "Fukusuke Kogyo Indonesia",
     google_site_verification: "your-google-site-verification",
     image_logo_url: "https://example.com/logo.png",
     emergencyNumber: "+628113487800",

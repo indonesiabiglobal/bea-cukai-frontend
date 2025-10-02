@@ -190,7 +190,7 @@ onUnmounted(() => {
 
       <!-- Home Content -->
       <div v-if="activeTab === 'home'" class="h-full overflow-y-auto">
-        <div class="mx-auto px-6 py-8">
+        <div class="mx-auto px-1 py-8">
 
           <!-- Welcome Header -->
           <div class="bg-white rounded-xl p-8 text-gray-800 mb-8">

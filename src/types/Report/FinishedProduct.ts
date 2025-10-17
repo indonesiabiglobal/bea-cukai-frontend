@@ -1,4 +1,5 @@
 type FinishedProduct = {
+  awal: number | string
   akhir: number | string
   akhr: number | string
   item_code: string

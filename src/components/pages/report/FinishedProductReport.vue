@@ -61,6 +61,7 @@ const finishedProductsData = async () => {
   }, false).then((res: any) => {
     // Map API response to FinishedProduct type
     const mappedData = res.data.map((item: any): FinishedProduct => ({
+      awal: item.awal || 0,
       akhir: item.akhir || 0,
       akhr: item.akhr || 0,
       item_code: item.item_code || '',

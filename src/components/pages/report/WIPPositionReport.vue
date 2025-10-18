@@ -291,7 +291,7 @@ const clearProductName = () => {
         </div>
       </div>
     </div>
-    <WIPPositionReportTable :items="wipPosition" :isFetching="isFetchingReport" :page="page" :limit="limit"
+    <WIPPositionReportTable :items="wipPosition" :isFetching="isFetchingReport" :page="page" :limit="limit" :from="startDate"
       :total="total" :hasNext="hasNext" :hasPrev="hasPrev" :totalPages="totalPages" @change-page="handleChangePage" @change-limit="handleChangeLimit" />
   </div>
 </template>

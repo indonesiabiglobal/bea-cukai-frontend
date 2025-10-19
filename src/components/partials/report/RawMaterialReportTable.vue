@@ -229,26 +229,22 @@ async function exportExcel() {
                             <td class="px-3 py-2 border-r border-gray-200 font-semibold">{{ r.item_code }}</td>
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.item_name }}</td>
                             <td class="px-3 py-2 border-r border-gray-200">{{ r.unit_code }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold">{{
-                                r.awal }}</td>
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold">{{ nf.format(toNum(r.awal)) }}</td>
                             <td
                                 class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold text-green-600">
-                                {{
-                                    r.masuk }}</td>
+                                {{ nf.format(toNum(r.masuk)) }}</td>
                             <td
                                 class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold text-red-600">
-                                {{
-                                    r.keluar }}</td>
-                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold">{{
-                                r.peny }}</td>
-                            <td class="px-3 py-2 text-right font-bold text-blue-600">{{ r.akhir }}
+                                {{ nf.format(toNum(r.keluar)) }}</td>
+                            <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold">{{ nf.format(toNum(r.peny)) }}</td>
+                            <td class="px-3 py-2 text-right font-bold text-blue-600">{{ nf.format(toNum(r.akhir)) }}
                             </td>
                             <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold">{{
-                                r.opname }}</td>
+                                nf.format(toNum(r.opname)) }}</td>
                             <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold" :class="{
                                 'text-green-600': toNum(r.selisih) > 0,
                                 'text-red-600': toNum(r.selisih) < 0
-                            }">{{ r.selisih }}</td>
+                            }">{{ nf.format(toNum(r.selisih)) }}</td>
                             <td class="px-3 py-2 border-r border-gray-200"></td>
                         </tr>
                     </tbody>

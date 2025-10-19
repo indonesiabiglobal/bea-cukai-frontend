@@ -204,7 +204,7 @@ const clearProductName = () => {
           </div>
           <div>
             <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-              Laporan Pengeluaran Barang
+              Laporan Posisi WIP
             </h3>
             <p class="text-gray-600 text-sm font-medium">Filter data berdasarkan periode dan kriteria yang dipilih</p>
           </div>

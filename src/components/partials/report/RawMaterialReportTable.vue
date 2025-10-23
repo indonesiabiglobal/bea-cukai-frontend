@@ -237,7 +237,7 @@ async function exportExcel() {
                                 class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold text-red-600">
                                 {{ nf.format(toNum(r.keluar)) }}</td>
                             <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold">{{ nf.format(toNum(r.peny)) }}</td>
-                            <td class="px-3 py-2 text-right font-bold text-blue-600">{{ nf.format(toNum(r.akhir)) }}
+                            <td class="px-3 py-2 text-right font-bold text-blue-600">{{ nf.format(toNum(r.opname)) }}
                             </td>
                             <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold">{{
                                 nf.format(toNum(r.opname)) }}</td>

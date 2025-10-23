@@ -44,10 +44,53 @@ watch(
  * Pabean Data
  */
 const isFetchingCategory = ref(false);
-const pabeanTypes: any = ref<PabeanTypes>({
-  pabean_code: '',
-  pabean_name: '',
-});
+"BC 2.0" 
+"BC 2.3" 
+"BC 2.5" 
+"BC 2.6.1"
+"BC 2.6.2"
+"BC 2.7" 
+"BC 3.0" 
+"BC 4.0" 
+"BC 4.1" 
+const pabeanTypes: any = ref<PabeanTypes[]>([
+  {
+    pabean_code: "BC 2.0",
+    pabean_name: "BC 2.0",
+  },
+  {
+    pabean_code: "BC 2.3",
+    pabean_name: "BC 2.3",
+  },
+  {
+    pabean_code: "BC 2.5",
+    pabean_name: "BC 2.5",
+  },
+  {
+    pabean_code: "BC 2.6.1",
+    pabean_name: "BC 2.6.1",
+  },
+  {
+    pabean_code: "BC 2.6.2",
+    pabean_name: "BC 2.6.2",
+  },
+  {
+    pabean_code: "BC 2.7",
+    pabean_name: "BC 2.7",
+  },
+  {
+    pabean_code: "BC 3.0",
+    pabean_name: "BC 3.0",
+  },
+  {
+    pabean_code: "BC 4.0",
+    pabean_name: "BC 4.0",
+  },
+  {
+    pabean_code: "BC 4.1",
+    pabean_name: "BC 4.1",
+  },
+]);
 
 const pabeanTypeData = async () => {
   isFetchingCategory.value = true;
@@ -190,7 +233,7 @@ const applyFilter = () => {
 
 onMounted(() => {
   entryProductsData()
-  pabeanTypeData()
+  // pabeanTypeData()
   productGroupData()
 })
 

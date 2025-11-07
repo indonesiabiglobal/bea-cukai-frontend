@@ -47,7 +47,7 @@ const logout = async () => {
         />
 
         <div class="meta">
-          <span>{{ userSession?.user?.nm_user }}</span>
+          <span>{{ userSession?.user?.username }}</span>
           <span>{{ userSession?.user?.level }}</span>
         </div>
       </div>

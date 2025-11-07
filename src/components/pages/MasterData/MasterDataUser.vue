@@ -29,12 +29,12 @@ const userDataData = async () => {
   await useApi.get('users', {
     page: page.value,
     limit: limit.value,
-    nm_user: namaUser.value || '',
+    username: namaUser.value || '',
   }, false).then((res: any) => {
     // Map API response to UserData type
     const mappedData = res.data.map((item: any): UserData => ({
-      id_user: item.id_user || '',
-      nm_user: item.nm_user || '',
+      id: item.id || '',
+      username: item.username || '',
       password: item.password || '',
       level: item.level || '',
     }));

@@ -1,6 +1,6 @@
 type UserData = {
-  id_user: string;
-  nm_user: string;
+  id: string;
+  username: string;
   password: string;
   level: string;
 }

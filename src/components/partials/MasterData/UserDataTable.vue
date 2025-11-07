@@ -37,8 +37,8 @@ const toNum = (v: unknown) => {
 const nf = new Intl.NumberFormat('id-ID')
 
 /* ================= Sorting sederhana ================= */
-type SortKey = 'id_user' | 'nm_user'
-const sortKey = ref<SortKey>('id_user')
+type SortKey = 'id' | 'username'
+const sortKey = ref<SortKey>('id')
 const sortDir = ref<'asc' | 'desc'>('asc')
 
 function toggleSort(k: SortKey) {
@@ -142,8 +142,8 @@ async function exportExcel() {
 
     const rows = data.map((r, index) => {
         return {
-            'ID User': r.id_user || '',
-            'Nama User': r.nm_user || '',
+            'ID User': r.id || '',
+            'Nama User': r.username || '',
             'Password': '***HIDDEN***', // Hide password in export for security
             'Level': r.level || '',
         }
@@ -207,15 +207,15 @@ async function exportExcel() {
                         <tr class="text-sm font-semibold text-gray-600">
                             <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">No</th>
                             <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">
-                                <button class="inline-flex items-center gap-1" @click="toggleSort('id_user')">
+                                <button class="inline-flex items-center gap-1" @click="toggleSort('id')">
                                     ID User
-                                    <span v-if="sortKey === 'id_user'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+                                    <span v-if="sortKey === 'id'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
                                 </button>
                             </th>
                             <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">
-                                <button class="inline-flex items-center gap-1" @click="toggleSort('nm_user')">
+                                <button class="inline-flex items-center gap-1" @click="toggleSort('username')">
                                     Nama User
-                                    <span v-if="sortKey === 'nm_user'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
+                                    <span v-if="sortKey === 'username'">{{ sortDir === 'asc' ? '▲' : '▼' }}</span>
                                 </button>
                             </th>
                             <th class="px-3 py-2 text-left border-r border-gray-200 bg-gray-50">Password</th>
@@ -225,8 +225,8 @@ async function exportExcel() {
                     <tbody class="divide-y divide-gray-100 bg-white">
                         <tr v-for="(r, idx) in sorted" :key="idx" class="text-sm">
                             <td class="px-3 py-2 border-r border-gray-200">{{ (page - 1) * limit + idx + 1 }}</td>
-                            <td class="px-3 py-2 border-r border-gray-200 font-semibold">{{ r.id_user }}</td>
-                            <td class="px-3 py-2 border-r border-gray-200">{{ r.nm_user }}</td>
+                            <td class="px-3 py-2 border-r border-gray-200 font-semibold">{{ r.id }}</td>
+                            <td class="px-3 py-2 border-r border-gray-200">{{ r.username }}</td>
                             <td class="px-3 py-2 border-r border-gray-200">
                                 <span class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded font-mono">
                                     ***HIDDEN***

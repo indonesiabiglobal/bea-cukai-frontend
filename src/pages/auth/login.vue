@@ -20,7 +20,7 @@ const toaster = useToaster()
 
 // Data
 const input = ref({
-  nm_user: '',
+  username: '',
   password: '',
 })
 
@@ -34,7 +34,7 @@ const handleLogin = async () => {
       token.value = response.token
       toaster.success('Login success')
     }).catch((error) => {
-      toaster.error(error?.data?.meta?.message || 'Failed to login')
+      toaster.error(error?.data?.meta?.message || error?.data?.error || 'Failed to login')
     }).finally(() => {
       isLoading.value = false
     })
@@ -120,7 +120,7 @@ useHead({
                   <VLabel class="auth-label">
                     Username
                   </VLabel>
-                  <VInput type="text" v-model="input.nm_user" autocomplete="current-password" />
+                  <VInput type="text" v-model="input.username" autocomplete="current-password" />
                 </VControl>
               </VField>
               <VField>

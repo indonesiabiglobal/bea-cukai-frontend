@@ -452,6 +452,8 @@ declare module 'vue' {
     TopServiceVisitDashboard: typeof import('./../src/components/partials/dashboard/visit/TopServiceVisitDashboard.vue')['default']
     TopUnitIncomeDashboard: typeof import('./../src/components/partials/dashboard/income/TopUnitIncomeDashboard.vue')['default']
     TopVendorPurchaseDashboard: typeof import('./../src/components/partials/dashboard/purchasing/TopVendorPurchaseDashboard.vue')['default']
+    TransactionLogReport: typeof import('./../src/components/pages/report/TransactionLogReport.vue')['default']
+    TransactionLogTable: typeof import('./../src/components/partials/report/TransactionLogTable.vue')['default']
     UIWidget: typeof import('./../src/components/partials/widgets/ui-creative/UIWidget.vue')['default']
     UIWidgetCreativeList: typeof import('./../src/components/partials/widgets/ui-creative/content/UIWidgetCreativeList.vue')['default']
     UIWidgetDays: typeof import('./../src/components/partials/widgets/ui-creative/content/UIWidgetDays.vue')['default']

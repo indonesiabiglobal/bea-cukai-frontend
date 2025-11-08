@@ -13,6 +13,7 @@ import MaterialInk from '/@src/components/pages/AuxiliaryMaterial/MaterialInk.vu
 import MaterialGaiso from '/@src/components/pages/AuxiliaryMaterial/MaterialGaiso.vue'
 import MasterDataProduct from '/@src/components/pages/MasterData/MasterDataProduct.vue'
 import MasterDataUser from '/@src/components/pages/MasterData/MasterDataUser.vue'
+import TransactionLogReport from '/@src/components/pages/report/TransactionLogReport.vue'
 
 export interface MenuItem {
   label: string
@@ -143,5 +144,15 @@ export const availableMenus: MenuItem[] = [
     description: 'Manage gaiso information and inventory',
     bgColor: 'bg-purple-500',
     groupMenu: 'Auxiliary Materials'
+  },
+  // gaiso
+  {
+    label: 'User Log Transaction',
+    icon: 'lnil lnil-ticket-alt',
+    path: '/user-log-transaction',
+    component: markRaw(TransactionLogReport),
+    description: 'Manage user log transaction information and inventory',
+    bgColor: 'bg-purple-500',
+    groupMenu: 'User Log'
   }
 ]

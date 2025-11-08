@@ -77,6 +77,14 @@ const links = ref<SideblockItem[]>([
       onClick: () => handleDashboardClick(item.path)
     })),
   },
+  // User Log Transaction Report
+  {
+    type: 'action',
+    label: 'User Log Transaction Report',
+    id: 'user-log-transaction-report',
+    icon: 'mdi:file-document-outline',
+    onClick: () => handleDashboardClick('/user-log-transaction')
+  },
   // logout
   {
     type: 'action',

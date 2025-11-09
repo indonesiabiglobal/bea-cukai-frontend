@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import DatePicker from 'primevue/datepicker';
 import type { TransactionLog } from '/@src/types/TransactionLog'
 import TransactionLogTable from '/@src/components/partials/report/TransactionLogTable.vue'
+import { filter } from 'compression';
 
 /**
  * Properties
@@ -14,25 +15,37 @@ const toast = useToast();
 const useApi = useApiFetchV2();
 
 // Filter variables
-const filterRange = ref({
-  start: route.query.start_date ? dayjs(route.query.start_date as string || new Date()).toDate() : dayjs().startOf('month').toDate(),
-  end: route.query.end_date ? dayjs(route.query.end_date as string || new Date()).toDate() : dayjs().endOf('month').toDate(),
+const filterRange = ref<{
+  start: Date | null
+  end: Date | null
+}>({
+  start: route.query.start_date 
+    ? dayjs(route.query.start_date as string).toDate() 
+    : dayjs().startOf('month').toDate(),
+  end: route.query.end_date 
+    ? dayjs(route.query.end_date as string).toDate() 
+    : dayjs().endOf('month').toDate(),
 })
 const userName = ref("")
+
+// Track if filters have been cleared (to allow null dates after clear)
+const isCleared = ref(false)
 
 let debounceTimer: any;
 watch(
   () => [filterRange.value.start, filterRange.value.end],
   () => {
     debounceTimer = setTimeout(() => {
-      router.replace({
-        path: router.currentRoute.value.path,
-        query: {
-          start_date: filterRange.value.start ? dayjs(filterRange.value.start).format('YYYY-MM-DD') : null,
-          end_date: filterRange.value.end ? dayjs(filterRange.value.end).format('YYYY-MM-DD') : null,
-        }
-      });
-      handleFilterChange();
+      if (!isCleared.value) {
+        router.replace({
+          path: router.currentRoute.value.path,
+          query: {
+            start_date: filterRange.value.start ? dayjs(filterRange.value.start).format('YYYY-MM-DD') : null,
+            end_date: filterRange.value.end ? dayjs(filterRange.value.end).format('YYYY-MM-DD') : null,
+          }
+        });
+        handleFilterChange();
+      }
     }, 500);
   },
   { deep: true }
@@ -52,13 +65,21 @@ const totalPages = ref(1)
 
 const transactionLogsData = async () => {
   isFetchingReport.value = true;
-  await useApi.get('transaction-logs', {
+  const params: any = {
     page: page.value,
     limit: limit.value,
-    start_date: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
-    end_date: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
     user_name: userName.value || '',
-  }, false).then((res: any) => {
+  }
+  
+  // Only add dates if they are set (not cleared)
+  if (!isCleared.value && filterRange.value.start) {
+    params.start_date = dayjs(filterRange.value.start).format('YYYY-MM-DD')
+  }
+  if (!isCleared.value && filterRange.value.end) {
+    params.end_date = dayjs(filterRange.value.end).format('YYYY-MM-DD')
+  }
+
+  await useApi.get('transaction-logs', params, false).then((res: any) => {
     // Map API response to TransactionLog type
     const mappedData = res.data.data.map((item: any): TransactionLog => ({
       trans_date: item.trans_date || '',
@@ -125,6 +146,44 @@ const clearUserName = () => {
   userName.value = "";
   handleFilterChange();
 }
+
+const clearStartDate = () => {
+  filterRange.value.start = dayjs().startOf('month').toDate();
+  isCleared.value = false;
+  router.replace({
+    path: router.currentRoute.value.path,
+    query: {
+      start_date: dayjs(filterRange.value.start).format('YYYY-MM-DD'),
+      end_date: filterRange.value.end ? dayjs(filterRange.value.end).format('YYYY-MM-DD') : null,
+    }
+  });
+  handleFilterChange();
+}
+
+const clearEndDate = () => {
+  filterRange.value.end = dayjs().endOf('month').toDate();
+  isCleared.value = false;
+  router.replace({
+    path: router.currentRoute.value.path,
+    query: {
+      start_date: filterRange.value.start ? dayjs(filterRange.value.start).format('YYYY-MM-DD') : null,
+      end_date: dayjs(filterRange.value.end).format('YYYY-MM-DD'),
+    }
+  });
+  handleFilterChange();
+}
+
+const clearAllDates = () => {
+  isCleared.value = true;
+  userName.value = "";
+  filterRange.value.start = null;
+  filterRange.value.end = null;
+  router.replace({
+    path: router.currentRoute.value.path,
+    query: {}
+  });
+  handleFilterChange();
+}
 </script>
 
 <template>
@@ -157,20 +216,43 @@ const clearUserName = () => {
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 items-end justify-items-end">
               <!-- Range Date -->
               <div class="filter-group w-full col-span-2">
-                <label class="block text-xs font-semibold text-gray-700 mb-0 uppercase tracking-wide me-2">Range
-                  Date:</label>
+                <div class="flex items-center justify-between mb-2">
+                  <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">Range Date:</label>
+                </div>
                 <div class="booking-bar col-span-2">
                   <div class="booking-bar-inputs">
                     <VControl class="control mr-4">
-                      <DatePicker v-model="filterRange.start" dateFormat="dd-mm-yy"
-                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
-                        appendTo="body" placeholder="Start" />
+                      <div class="relative">
+                        <DatePicker v-model="filterRange.start" dateFormat="dd-mm-yy"
+                          inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                          appendTo="body" placeholder="Start" />
+                        <button 
+                          v-if="filterRange.start && dayjs(filterRange.start).format('YYYY-MM-DD') !== dayjs().startOf('month').format('YYYY-MM-DD')" 
+                          type="button" @click="clearStartDate"
+                          class="absolute inset-y-0 right-2 flex items-center px-2 text-gray-400 hover:text-gray-600 focus:outline-none z-10">
+                          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
                     </VControl>
 
                     <VControl class="control">
-                      <DatePicker v-model="filterRange.end" dateFormat="dd-mm-yy"
-                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
-                        appendTo="body" placeholder="End" />
+                      <div class="relative">
+                        <DatePicker v-model="filterRange.end" dateFormat="dd-mm-yy"
+                          inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                          appendTo="body" placeholder="End" />
+                        <button 
+                          v-if="filterRange.end && dayjs(filterRange.end).format('YYYY-MM-DD') !== dayjs().endOf('month').format('YYYY-MM-DD')" 
+                          type="button" @click="clearEndDate"
+                          class="absolute inset-y-0 right-2 flex items-center px-2 text-gray-400 hover:text-gray-600 focus:outline-none z-10">
+                          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </div>
                     </VControl>
                   </div>
                 </div>
@@ -200,7 +282,20 @@ const clearUserName = () => {
                 </div>
               </div>
             </div>
-            <div class="mt-3 flex justify-end">
+            <div class="mt-3 flex justify-end gap-3">
+              <!-- Clear All Button -->
+              <button 
+                type="button" @click="clearAllDates"
+                class="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 
+                       text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 
+                       transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-red-200 flex items-center justify-center space-x-2">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span>Clear All</span>
+              </button>
+              
+              <!-- Search Button -->
               <button @click="applyFilter"
                 class="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 
                        text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 

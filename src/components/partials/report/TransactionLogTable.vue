@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<{
     hasNext?: boolean
     hasPrev?: boolean
     totalPages?: number
-    filterRange?: { start: Date, end: Date }
+    filterRange?: { start: Date | null, end: Date | null }
     userName?: string
 }>(), {
     page: 1,
@@ -114,17 +114,21 @@ async function exportExcel() {
     try {
         let filename = 'transaction-log.xlsx'
 
+        const params: any = {
+            user_name: props.userName || '',
+        }
+        
+        // Only add dates if they are set
+        if (props.filterRange?.start) {
+            params.start_date = dayjs(props.filterRange.start).format('YYYY-MM-DD')
+        }
+        if (props.filterRange?.end) {
+            params.end_date = dayjs(props.filterRange.end).format('YYYY-MM-DD')
+        }
+
         const data = await useApi.get(
             'transaction-logs/export',
-            {
-                start_date: props.filterRange?.start
-                    ? dayjs(props.filterRange.start).format('YYYY-MM-DD')
-                    : dayjs().startOf('month').format('YYYY-MM-DD'),
-                end_date: props.filterRange?.end
-                    ? dayjs(props.filterRange.end).format('YYYY-MM-DD')
-                    : dayjs().endOf('month').format('YYYY-MM-DD'),
-                user_name: props.userName || '',
-            },
+            params,
       /* showToast */ false,
             {
                 responseType: 'blob',

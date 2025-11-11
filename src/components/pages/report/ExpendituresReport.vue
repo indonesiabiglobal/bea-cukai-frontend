@@ -227,7 +227,7 @@ const clearProductName = () => {
   <div class="sales-dashboard">
     <!--Header-->
     <div
-      class="dashboard-header  bg-gradient-to-r from-white via-gray-50 to-white backdrop-blur-sm border border-gray-200/60 shadow-xl rounded-3xl p-5 mt-5">
+      class="dashboard-header  bg-gradient-to-r from-white via-gray-50 to-white backdrop-blur-sm border border-gray-200/60 shadow-xl rounded-3xl p-3 mt-5">
       <div class="flex flex-col lg:justify-between gap-6 w-full">
 
         <!-- Header Info Section -->
@@ -249,39 +249,39 @@ const clearProductName = () => {
         <!-- Filter Controls Section -->
         <div class="filter-controls">
           <div class="relative w-full">
-            <div
-              class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 items-end justify-items-end">
+            <div class="flex flex-wrap gap-4 items-end">
               <!-- Range Date -->
-              <div class="filter-group w-full col-span-2">
-                <label class="block text-xs font-semibold text-gray-700 mb-0 uppercase tracking-wide me-2">Range
-                  Date:</label>
-                <div class="booking-bar col-span-2">
+              <div class="filter-group w-full sm:w-auto flex-1 min-w-[280px]">
+                <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide">Range
+                  Date</label>
+                <div class="booking-bar">
                   <div class="booking-bar-inputs">
                     <VControl class="control mr-4">
                       <DatePicker v-model="filterRange.start" dateFormat="dd-mm-yy"
-                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
                         appendTo="body" placeholder="Start" />
                     </VControl>
 
                     <VControl class="control">
                       <DatePicker v-model="filterRange.end" dateFormat="dd-mm-yy"
-                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
                         appendTo="body" placeholder="End" />
                     </VControl>
                   </div>
                 </div>
               </div>
+              
               <!-- Jenis Pabean -->
-              <div class="filter-group w-full col-span-1">
-                <div class="flex items-center justify-between mb-2">
-                  <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
+              <div class="filter-group w-full sm:w-auto flex-1 min-w-[180px]">
+                <div class="flex items-center justify-between">
+                  <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide">
                     Jenis Pabean
                   </label>
                 </div>
 
                 <div class="relative">
-                  <select v-model="selectedPabeanType" class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-               focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
+                  <select v-model="selectedPabeanType" class="w-full px-3 py-2 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+               focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all duration-200 
                hover:border-gray-300 appearance-none cursor-pointer shadow-sm" @change="handleFilterChange">
                     <option value="">All Pabean Types</option>
                     <option v-for="pabeanType in pabeanTypes" :key="pabeanType.pabean_code"
@@ -293,7 +293,6 @@ const clearProductName = () => {
                   <!-- Tombol X di dalam input -->
                   <button v-if="selectedPabeanType" type="button" @click="clearCategory" aria-label="Clear pabeanType"
                     class="absolute inset-y-0 right-7 flex items-center px-2 text-gray-400 hover:text-gray-600 focus:outline-none">
-                    <!-- icon X -->
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -309,16 +308,16 @@ const clearProductName = () => {
               </div>
 
               <!-- Grup Barang -->
-              <div class="filter-group w-full col-span-1">
-                <div class="flex items-center justify-between mb-2">
-                  <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
+              <div class="filter-group w-full sm:w-auto flex-1 min-w-[180px]">
+                <div class="flex items-center justify-between">
+                  <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide">
                     Grup Barang
                   </label>
                 </div>
 
                 <div class="relative">
-                  <select v-model="selectedProductGroup" class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-               focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
+                  <select v-model="selectedProductGroup" class="w-full px-3 py-2 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+               focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all duration-200 
                hover:border-gray-300 appearance-none cursor-pointer shadow-sm" @change="handleFilterChange">
                     <option value="">All Product Groups</option>
                     <option v-for="productGroup in productGroups" :key="productGroup.product_group_id"
@@ -330,7 +329,6 @@ const clearProductName = () => {
                   <!-- Tombol X di dalam input -->
                   <button v-if="selectedProductGroup" type="button" @click="clearVendor" aria-label="Clear pabeanType"
                     class="absolute inset-y-0 right-7 flex items-center px-2 text-gray-400 hover:text-gray-600 focus:outline-none">
-                    <!-- icon X -->
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -346,17 +344,17 @@ const clearProductName = () => {
               </div>
 
               <!-- No Pabean -->
-              <div class="filter-group w-full col-span-1">
-                <div class="flex items-center justify-between mb-2">
-                  <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
+              <div class="filter-group w-full sm:w-auto flex-1 min-w-[180px]">
+                <div class="flex items-center justify-between">
+                  <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide">
                     No. Pabean
                   </label>
                 </div>
 
                 <div class="relative">
                   <input type="text" v-model="noPabean" @input="handleFilterChange" placeholder="Masukkan No. Pabean"
-                    class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-                           focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
+                    class="w-full px-3 py-2 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                           focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all duration-200 
                            hover:border-gray-300 appearance-none cursor-text shadow-sm" aria-label="No. Pabean" />
 
                   <!-- Tombol X di dalam input -->
@@ -370,17 +368,17 @@ const clearProductName = () => {
               </div>
 
               <!-- Kode Barang -->
-              <div class="filter-group w-full col-span-1">
-                <div class="flex items-center justify-between mb-2">
-                  <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
+              <div class="filter-group w-full sm:w-auto flex-1 min-w-[180px]">
+                <div class="flex items-center justify-between">
+                  <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide">
                     Kode Barang
                   </label>
                 </div>
 
                 <div class="relative">
                   <input type="text" v-model="productCode" @input="handleFilterChange"
-                    placeholder="Masukkan Kode Barang" class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-                           focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
+                    placeholder="Masukkan Kode Barang" class="w-full px-3 py-2 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                           focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all duration-200 
                            hover:border-gray-300 appearance-none cursor-text shadow-sm" aria-label="Kode Barang" />
 
                   <!-- Tombol X di dalam input -->
@@ -394,17 +392,17 @@ const clearProductName = () => {
               </div>
 
               <!-- Nama Barang -->
-              <div class="filter-group w-full col-span-1">
-                <div class="flex items-center justify-between mb-2">
-                  <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
+              <div class="filter-group w-full sm:w-auto flex-1 min-w-[180px]">
+                <div class="flex items-center justify-between">
+                  <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide">
                     Nama Barang
                   </label>
                 </div>
 
                 <div class="relative">
                   <input type="text" v-model="productName" @input="handleFilterChange"
-                    placeholder="Masukkan Nama Barang" class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-                           focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
+                    placeholder="Masukkan Nama Barang" class="w-full px-3 py-2 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                           focus:border-red-500 focus:ring-4 focus:ring-red-100 transition-all duration-200 
                            hover:border-gray-300 appearance-none cursor-text shadow-sm" aria-label="Nama Barang" />
 
                   <!-- Tombol X di dalam input -->
@@ -416,18 +414,20 @@ const clearProductName = () => {
                   </button>
                 </div>
               </div>
-            </div>
-            <div class="mt-3 flex justify-end">
-              <button @click="applyFilter"
-                class="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 
-                       text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 
-                       transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-orange-200 flex items-center justify-center space-x-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                </svg>
-                <span>Search</span>
-              </button>
+
+              <!-- Search Button -->
+              <div class="filter-group w-full sm:w-auto ml-auto">
+                <button @click="applyFilter"
+                  class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 
+                         text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 
+                         transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-red-200 flex items-center justify-center space-x-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                  </svg>
+                  <span>Search</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

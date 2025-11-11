@@ -115,8 +115,8 @@ const clearNamaUser = () => {
   <div class="sales-dashboard">
     <!--Header-->
     <div
-      class="dashboard-header  bg-gradient-to-r from-white via-gray-50 to-white backdrop-blur-sm border border-gray-200/60 shadow-xl rounded-3xl p-5 mt-5">
-      <div class="flex flex-col lg:justify-between gap-6 w-full">
+      class="dashboard-header  bg-gradient-to-r from-white via-gray-50 to-white backdrop-blur-sm border border-gray-200/60 shadow-xl rounded-3xl p-3 mt-5">
+      <div class="flex flex-col lg:justify-between gap-3 w-full">
 
         <!-- Header Info Section -->
         <div class="flex items-center space-x-4">
@@ -142,7 +142,7 @@ const clearNamaUser = () => {
               
               <!-- Nama User -->
               <div class="filter-group w-full col-span-1">
-                <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center justify-between">
                   <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
                     Nama User
                   </label>
@@ -150,7 +150,7 @@ const clearNamaUser = () => {
 
                 <div class="relative">
                   <input type="text" v-model="namaUser" @input="handleFilterChange"
-                    placeholder="Masukkan Nama User" class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                    placeholder="Masukkan Nama User" class="w-full px-3 py-2 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
                            focus:border-violet-500 focus:ring-4 focus:ring-violet-100 transition-all duration-200 
                            hover:border-gray-300 appearance-none cursor-text shadow-sm" aria-label="Nama User" />
 
@@ -163,18 +163,20 @@ const clearNamaUser = () => {
                   </button>
                 </div>
               </div>
-            </div>
-            <div class="mt-3 flex justify-end">
-              <button @click="applyFilter"
-                class="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 
-                       text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 
-                       transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-violet-200 flex items-center justify-center space-x-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                </svg>
-                <span>Search</span>
-              </button>
+              
+              <!-- Nama User -->
+              <div class="filter-group w-full col-span-1">
+                <button @click="applyFilter"
+                  class="w-full md:w-auto px-4 py-2 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 
+                        text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 
+                        transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-violet-200 flex items-center justify-center space-x-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                  </svg>
+                  <span>Search</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

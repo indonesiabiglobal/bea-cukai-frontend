@@ -157,8 +157,8 @@ const clearItemName = () => {
   <div class="sales-dashboard">
     <!--Header-->
     <div
-      class="dashboard-header  bg-gradient-to-r from-white via-gray-50 to-white backdrop-blur-sm border border-gray-200/60 shadow-xl rounded-3xl p-5 mt-5">
-      <div class="flex flex-col lg:justify-between gap-6 w-full">
+      class="dashboard-header  bg-gradient-to-r from-white via-gray-50 to-white backdrop-blur-sm border border-gray-200/60 shadow-xl rounded-3xl p-3 mt-5">
+      <div class="flex flex-col lg:justify-between gap-3 w-full">
 
         <!-- Header Info Section -->
         <div class="flex items-center space-x-4">
@@ -179,23 +179,22 @@ const clearItemName = () => {
         <!-- Filter Controls Section -->
         <div class="filter-controls">
           <div class="relative w-full">
-            <div
-              class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 items-end justify-items-end">
+            <div class="flex flex-wrap gap-4 items-end">
               <!-- Range Date -->
-              <div class="filter-group w-full col-span-2">
-                <label class="block text-xs font-semibold text-gray-700 mb-0 uppercase tracking-wide me-2">Range
-                  Date:</label>
-                <div class="booking-bar col-span-2">
+              <div class="filter-group flex-1 min-w-[280px]">
+                <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Range
+                  Date</label>
+                <div class="booking-bar">
                   <div class="booking-bar-inputs">
                     <VControl class="control mr-4">
                       <DatePicker v-model="filterRange.start" dateFormat="dd-mm-yy"
-                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
                         appendTo="body" placeholder="Start" />
                     </VControl>
 
                     <VControl class="control">
                       <DatePicker v-model="filterRange.end" dateFormat="dd-mm-yy"
-                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
                         appendTo="body" placeholder="End" />
                     </VControl>
                   </div>
@@ -203,7 +202,7 @@ const clearItemName = () => {
               </div>
 
               <!-- Kode Item -->
-              <div class="filter-group w-full col-span-1">
+              <div class="filter-group flex-1 min-w-[180px]">
                 <div class="flex items-center justify-between mb-2">
                   <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
                     Kode Item
@@ -212,8 +211,8 @@ const clearItemName = () => {
 
                 <div class="relative">
                   <input type="text" v-model="itemCode" @input="handleFilterChange" placeholder="Masukkan Kode Item"
-                    class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-                           focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
+                    class="w-full px-3 py-2 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                           focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all duration-200 
                            hover:border-gray-300 appearance-none cursor-text shadow-sm" aria-label="Kode Item" />
 
                   <!-- Tombol X di dalam input -->
@@ -227,7 +226,7 @@ const clearItemName = () => {
               </div>
 
               <!-- Nama Item -->
-              <div class="filter-group w-full col-span-1">
+              <div class="filter-group flex-1 min-w-[180px]">
                 <div class="flex items-center justify-between mb-2">
                   <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
                     Nama Item
@@ -236,8 +235,8 @@ const clearItemName = () => {
 
                 <div class="relative">
                   <input type="text" v-model="itemName" @input="handleFilterChange" placeholder="Masukkan Nama Item"
-                    class="w-full px-4 py-3 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-                           focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200 
+                    class="w-full px-3 py-2 pr-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
+                           focus:border-orange-500 focus:ring-4 focus:ring-orange-100 transition-all duration-200 
                            hover:border-gray-300 appearance-none cursor-text shadow-sm" aria-label="Nama Item" />
 
                   <!-- Tombol X di dalam input -->
@@ -249,18 +248,20 @@ const clearItemName = () => {
                   </button>
                 </div>
               </div>
-            </div>
-            <div class="mt-3 flex justify-end">
-              <button @click="applyFilter"
-                class="w-full md:w-auto px-6 py-3 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 
-                       text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 
-                       transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-orange-200 flex items-center justify-center space-x-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                </svg>
-                <span>Search</span>
-              </button>
+
+              <!-- Search Button -->
+              <div class="filter-group ml-auto">
+                <button @click="applyFilter"
+                  class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 
+                         text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 
+                         transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-orange-200 flex items-center justify-center space-x-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                  </svg>
+                  <span>Search</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

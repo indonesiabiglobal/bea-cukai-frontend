@@ -295,7 +295,7 @@ const clearProductName = () => {
             <div class="flex flex-wrap gap-4 items-end">
               <!-- Range Date -->
               <div class="filter-group w-full sm:w-auto flex-1 min-w-[280px]">
-                <label class="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Range
+                <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide">Range
                   Date</label>
                 <div class="booking-bar">
                   <div class="booking-bar-inputs">
@@ -317,7 +317,7 @@ const clearProductName = () => {
               <!-- Jenis Pabean -->
               <div class="filter-group w-full sm:w-auto flex-1 min-w-[180px]">
                 <div class="flex items-center justify-between">
-                  <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                  <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide">
                     Jenis Pabean
                   </label>
                 </div>
@@ -353,7 +353,7 @@ const clearProductName = () => {
               <!-- Grup Barang -->
               <div class="filter-group w-full sm:w-auto flex-1 min-w-[180px]">
                 <div class="flex items-center justify-between">
-                  <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                  <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide">
                     Grup Barang
                   </label>
                 </div>
@@ -389,7 +389,7 @@ const clearProductName = () => {
               <!-- No Pabean -->
               <div class="filter-group w-full sm:w-auto flex-1 min-w-[180px]">
                 <div class="flex items-center justify-between">
-                  <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                  <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide">
                     No. Pabean
                   </label>
                 </div>
@@ -413,7 +413,7 @@ const clearProductName = () => {
               <!-- Kode Barang -->
               <div class="filter-group w-full sm:w-auto flex-1 min-w-[180px]">
                 <div class="flex items-center justify-between">
-                  <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                  <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide">
                     Kode Barang
                   </label>
                 </div>
@@ -437,7 +437,7 @@ const clearProductName = () => {
               <!-- Nama Barang -->
               <div class="filter-group w-full sm:w-auto flex-1 min-w-[180px]">
                 <div class="flex items-center justify-between">
-                  <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wide">
+                  <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide">
                     Nama Barang
                   </label>
                 </div>

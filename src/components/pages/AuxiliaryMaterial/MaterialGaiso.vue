@@ -183,7 +183,7 @@ const clearItemName = () => {
             <div class="flex flex-wrap gap-4 items-end">
               <!-- Range Date -->
               <div class="filter-group flex-1 min-w-[280px]">
-                <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">Range
+                <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide">Range
                   Date</label>
                 <div class="booking-bar">
                   <div class="booking-bar-inputs">
@@ -204,7 +204,7 @@ const clearItemName = () => {
 
               <!-- Kode Item -->
               <div class="filter-group flex-1 min-w-[180px]">
-                <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">
+                <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide">
                   Kode Item
                 </label>
 
@@ -226,7 +226,7 @@ const clearItemName = () => {
 
               <!-- Nama Item -->
               <div class="filter-group flex-1 min-w-[180px]">
-                <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">
+                <label class="text-xs font-semibold text-gray-700 uppercase tracking-wide">
                   Nama Item
                 </label>
 

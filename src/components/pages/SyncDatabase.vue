@@ -26,26 +26,26 @@ const runSync = async () => {
   
   await useApi.post('sync/run', {}, false)
     .then((res: any) => {
-      if (res.data.status === 'running') {
+      if (res.status === 'running') {
         toast.add({
           severity: 'info',
           summary: 'Sync Running',
-          detail: res.data.message || 'Sinkronisasi sedang berjalan.',
+          detail: res.message || 'Sinkronisasi sedang berjalan.',
           life: 3000,
         });
         syncStatus.value = 'running';
-      } else if (res.data.status === 'success') {
+      } else if (res.status === 'success') {
         toast.add({
           severity: 'success',
           summary: 'Sync Success',
-          detail: res.data.message || 'Sinkronisasi database berhasil.',
+          detail: res.message || 'Sinkronisasi database berhasil.',
           life: 3000,
         });
         syncStatus.value = 'idle';
         // Refresh log after successful sync
         getSyncLog();
       }
-      syncMessage.value = res.data.message || '';
+      syncMessage.value = res.message || '';
       
       // Start polling status if running
       if (syncStatus.value === 'running') {
@@ -74,9 +74,9 @@ const runSync = async () => {
 const getSyncStatus = async () => {
   await useApi.get('sync/status', {}, false)
     .then((res: any) => {
-      if (res.data.status === 'running') {
+      if (res.status === 'running') {
         syncStatus.value = 'running';
-        syncMessage.value = res.data.message || 'Sinkronisasi sedang berjalan.';
+        syncMessage.value = res.message || 'Sinkronisasi sedang berjalan.';
         
         // Start polling if not already started
         if (!statusInterval) {
@@ -84,7 +84,7 @@ const getSyncStatus = async () => {
         }
       } else {
         syncStatus.value = 'idle';
-        syncMessage.value = res.data.message || 'Tidak ada sinkronisasi yang sedang berjalan.';
+        syncMessage.value = res.message || 'Tidak ada sinkronisasi yang sedang berjalan.';
         
         // Stop polling if running
         if (statusInterval) {
@@ -105,9 +105,9 @@ const getSyncStatus = async () => {
 const getSyncLog = async () => {
   await useApi.get('sync/log', {}, false)
     .then((res: any) => {
-      if (res.data.status === 'success') {
-        syncLog.value = res.data.content || '';
-        logFile.value = res.data.logFile || '';
+      if (res.status === 'success') {
+        syncLog.value = res.content || '';
+        logFile.value = res.logFile || '';
       } else {
         syncLog.value = 'Log file tidak ditemukan.';
         logFile.value = '';

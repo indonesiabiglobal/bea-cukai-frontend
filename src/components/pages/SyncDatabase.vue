@@ -115,7 +115,7 @@ const getSyncLog = async () => {
     })
     .catch((err: any) => {
       console.error(err);
-      syncLog.value = 'Gagal memuat log file.';
+      syncLog.value = err?.response?._data?.message || 'Gagal memuat log file.';
       logFile.value = '';
     });
 };

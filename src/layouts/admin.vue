@@ -85,6 +85,14 @@ const links = ref<SideblockItem[]>([
     icon: 'mdi:file-document-outline',
     onClick: () => handleDashboardClick('/user-log-transaction')
   },
+  // Sync Database
+  {
+    type: 'action',
+    label: 'Sync Database',
+    id: 'sync-database',
+    icon: 'mdi:database-sync',
+    onClick: () => handleDashboardClick('/sync-database')
+  },
   // logout
   {
     type: 'action',

@@ -404,6 +404,7 @@ declare module 'vue' {
     SwitchBlockThinLabelDocumentation: typeof import('./../documentation/switch-block/switch-block-thin-label-documentation.md')['default']
     SwitchSegmentDocumentation: typeof import('./../documentation/switch-segment/switch-segment-documentation.md')['default']
     SwitchSegmentLabelDocumentation: typeof import('./../documentation/switch-segment/switch-segment-label-documentation.md')['default']
+    SyncDatabase: typeof import('./../src/components/pages/SyncDatabase.vue')['default']
     TabbedGridItem: typeof import('./../src/components/partials/grids-users/TabbedGridItem.vue')['default']
     TableBaseDocumentation: typeof import('./../documentation/elements/table/table-base-documentation.md')['default']
     TableListV1: typeof import('./../src/components/pages/layouts/table-list/TableListV1.vue')['default']

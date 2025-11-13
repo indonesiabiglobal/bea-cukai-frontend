@@ -32,6 +32,7 @@ export interface SideblockItemAction {
   hideMobile?: boolean
   label?: string
   badge?: string | number
+  group?: string
 
   onClick: (event: Event) => void
 }

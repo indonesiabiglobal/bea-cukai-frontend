@@ -55,6 +55,23 @@ watch(
     }
   },
 )
+
+const userSession = useUserSession()
+const filteredLinks = ref<SideblockItem[]>([]);
+onMounted(() => {
+  if (props.links) {
+    if (userSession?.user?.level !== 'admin') {
+      // Filter links based on user level
+      filteredLinks.value = props.links.filter(link => {
+        // Example filtering logic, adjust as needed
+        if (link.id === 'sync-database' || link.id === 'user-log-transaction-report') {
+          return false;
+        }
+        return true;
+      });
+    }
+  }
+})
 </script>
 
 <template>
@@ -71,13 +88,13 @@ watch(
     </MobileNavbar>
 
     <Transition name="slide-x">
-      <SideblockSubsidebarMobile v-if="isMobileSideblockOpen" :items="props.links">
+      <SideblockSubsidebarMobile v-if="isMobileSideblockOpen" :items="filteredLinks">
         <template #default>
           <slot name="sideblock-title-mobile" />
         </template>
         <template #links>
           <slot name="sideblock-links-mobile" v-bind="contextRx">
-            <SideblockItemMobile v-for="(link, key) in props.links" :key :link />
+            <SideblockItemMobile v-for="(link, key) in filteredLinks" :key :link />
           </slot>
         </template>
       </SideblockSubsidebarMobile>
@@ -108,9 +125,9 @@ watch(
         </template>
         <template #links>
           <slot name="sideblock-links" v-bind="contextRx">
-            <SideblockItem v-if="isDesktopSideblockOpen" v-for="(link, key) in props.links" :key :link
+            <SideblockItem v-if="isDesktopSideblockOpen" v-for="(link, key) in filteredLinks" :key :link
               @toggle="isDesktopSideblockOpen = !isDesktopSideblockOpen" />
-            <SideblockItemInactive v-else v-for="(link, key) in props.links" :class="'sidebar-block-inactive'" :key
+            <SideblockItemInactive v-else v-for="(link, key) in filteredLinks" :class="'sidebar-block-inactive'" :key
               :link :isDesktopSideblockOpen="isDesktopSideblockOpen"
               @toggleDesktopSideblock="isDesktopSideblockOpen = !isDesktopSideblockOpen" />
           </slot>

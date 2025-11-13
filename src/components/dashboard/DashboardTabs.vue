@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { availableMenus, type MenuItem } from '../../data/apps/menu'
+import { SideblockItem } from '../layouts/sideblock/sideblock.types'
 
 interface TabItem {
   id: string
@@ -132,6 +133,24 @@ onMounted(() => {
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeydown)
 })
+
+
+const userSession = useUserSession()
+const filteredLinks = ref<MenuItem[]>([]);
+onMounted(() => {
+  if (availableMenus) {
+    if (userSession?.user?.level !== 'admin') {
+      // Filter links based on user level
+      filteredLinks.value = availableMenus.filter(link => {
+        // Example filtering logic, adjust as needed
+        if (link.groupMenu === 'Sync Database' || link.groupMenu === 'User Log') {
+          return false;
+        }
+        return true;
+      });
+    }
+  }
+})
 </script>
 
 <template>
@@ -175,7 +194,7 @@ onUnmounted(() => {
       <div v-if="showAddMenu"
         class="add-menu absolute right-4 top-12 bg-white border border-gray-200 rounded-lg shadow-lg z-50 min-w-48">
         <div class="py-2">
-          <div v-for="menuItem in availableMenus" :key="menuItem.path" @click="addTab(menuItem)"
+          <div v-for="menuItem in filteredLinks" :key="menuItem.path" @click="addTab(menuItem)"
             class="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 cursor-pointer transition-colors">
             <i :class="menuItem.icon" class="text-sm text-gray-600"></i>
             <span class="text-sm text-gray-700">{{ menuItem.label }}</span>
@@ -201,7 +220,7 @@ onUnmounted(() => {
 
           <!-- Quick Access Cards -->
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            <div v-for="menu in availableMenus" :key="menu.path" @click="addTab(menu)"
+            <div v-for="menu in filteredLinks" :key="menu.path" @click="addTab(menu)"
               class="card hover:shadow-xl transition-all duration-300 hover:scale-105 cursor-pointer group">
               <div class="card-content p-6">
                 <div class="flex items-center space-x-4 mb-4">

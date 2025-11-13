@@ -163,6 +163,6 @@ export const availableMenus: MenuItem[] = [
     component: markRaw(SyncDatabase),
     description: 'Manage sync database information and inventory',
     bgColor: 'bg-purple-500',
-    groupMenu: 'User Log'
+    groupMenu: 'Sync Database'
   }
 ]

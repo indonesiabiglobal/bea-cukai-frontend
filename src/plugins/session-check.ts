@@ -36,7 +36,7 @@ export default definePlugin(async ({ router, pinia, event }) => {
         // Do api request call to retreive user profile.
         // Note that the api is provided with json-server
         const user = await $fetch('/users/profile')
-        userSession.setUser(user.result)
+        userSession.setUser(user.data)
       }
       catch (err) {
         token.value = undefined

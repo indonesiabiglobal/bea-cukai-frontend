@@ -106,7 +106,6 @@ const links = ref<SideblockItem[]>([
 
 <template>
   <SideblockLayout :links class="my-layout" theme="curved">
-    <!-- Propagating the context to the default slot -->
     <template #default="context">
       <slot v-bind="context" />
     </template>
@@ -115,17 +114,9 @@ const links = ref<SideblockItem[]>([
       <RouterLink to="/">
         <AnimatedLogo width="36px" />
       </RouterLink>
-
-      <!-- <h3 class="is-hidden-mobile ml-2">
-        RS Baghraf Health Care
-      </h3> -->
     </template>
 
     <template #toolbar>
-      <!-- <ToolbarThemeToggle /> -->
-      <!-- <ToolbarLanguage /> -->
-      <!-- <ToolbarNotification /> -->
-      <!-- <ToolbarActivity /> -->
     </template>
 
     <template #toolbar-mobile>
@@ -135,18 +126,10 @@ const links = ref<SideblockItem[]>([
 
     <template #sideblock-end>
       <ToolbarUserProfile end />
-      <!-- <LayoutSwitcher class="search-link" /> -->
-      <!-- <ToolbarSearch /> -->
     </template>
 
     <template #extra>
-      <!-- <CircularMenu /> -->
-
       <PanelLanguages />
-      <!-- <PanelActivity /> -->
-      <!-- <PanelSearch /> -->
-      <!-- <PanelTask /> -->
-
       <ClientOnly>
         <VReloadPrompt app-name="title" />
       </ClientOnly>

@@ -148,6 +148,8 @@ onMounted(() => {
         }
         return true;
       });
+    } else {
+      filteredLinks.value = availableMenus;
     }
   }
 })

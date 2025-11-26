@@ -69,6 +69,8 @@ onMounted(() => {
         }
         return true;
       });
+    } else {
+      filteredLinks.value = props.links;
     }
   }
 })

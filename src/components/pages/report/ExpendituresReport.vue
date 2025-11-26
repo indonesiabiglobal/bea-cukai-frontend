@@ -285,7 +285,7 @@ const clearProductName = () => {
                hover:border-gray-300 appearance-none cursor-pointer shadow-sm" @change="handleFilterChange">
                     <option value="">All Pabean Types</option>
                     <option v-for="pabeanType in pabeanTypes" :key="pabeanType.pabean_code"
-                      :value="pabeanType.pabean_code">
+                      :value="pabeanType.pabean_name">
                       {{ pabeanType.pabean_name }}
                     </option>
                   </select>

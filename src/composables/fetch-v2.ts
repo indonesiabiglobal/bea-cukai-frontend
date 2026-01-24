@@ -1,4 +1,3 @@
-import { log } from 'console';
 import type { H3Event } from 'h3'
 import { ofetch } from 'ofetch'
 import { useToast } from 'primevue/usetoast';
@@ -6,6 +5,7 @@ import { useToast } from 'primevue/usetoast';
 export function useApiFetchV2(event?: H3Event) {
   const token = useUserToken(event);
   const toast = useToast();
+  const router = useRouter();
 
   function isPrivateIp(host: string) {
     if (host === 'localhost' || host === '127.0.0.1') return true;
@@ -57,6 +57,10 @@ export function useApiFetchV2(event?: H3Event) {
 
       return response;
     } catch (error: any) {
+      if (error?.response?.status === 401) {
+        // Handle unauthorized error, e.g., redirect to login
+        router.push('/auth/login') // Uncomment this line to enable redirection
+      } 
       if (showToastOption) {
         const errorMessage = error?.response?._data?.meta?.message || error.response._data.message || 'Unknown error message';
 

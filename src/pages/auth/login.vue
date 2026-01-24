@@ -61,9 +61,8 @@ const handleLogin = async () => {
 }
 
 onMounted(() => {
-  // handleGoogleLoginResponse();
   if (token.value) {
-    router.push('/admins')
+    router.push('/')
   }
 })
 

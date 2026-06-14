@@ -20,10 +20,18 @@ const itemCode = ref("")
 const itemName = ref("")
 
 let debounceTimer: any;
+let itemFilterDebounceTimer: any;
+
+// Debounce untuk date range
 watch(
   () => [filterRange.value.start, filterRange.value.end],
   () => {
     debounceTimer = setTimeout(() => {
+      // Validasi date range sebelum API call
+      if (filterRange.value.start && filterRange.value.end && filterRange.value.start > filterRange.value.end) {
+        return; // Jangan lanjut jika validasi gagal
+      }
+
       router.replace({
         path: router.currentRoute.value.path,
         query: {
@@ -36,6 +44,27 @@ watch(
   },
   { deep: true }
 );
+
+// Debounce untuk item code dan item name
+const debouncedFilterChange = () => {
+  if (itemFilterDebounceTimer) clearTimeout(itemFilterDebounceTimer);
+  itemFilterDebounceTimer = setTimeout(() => {
+    page.value = 1;
+    finishedProductsData();
+  }, 500);
+};
+
+watch([itemCode, itemName], () => {
+  debouncedFilterChange();
+});
+
+/**
+ * Date Range Validation
+ */
+const isDateRangeValid = computed(() => {
+  if (!filterRange.value.start || !filterRange.value.end) return true;
+  return filterRange.value.start <= filterRange.value.end;
+});
 
 /**
  * Finished Products Data
@@ -136,6 +165,15 @@ function handleChangeLimit(l: number) {
 }
 
 const applyFilter = () => {
+  if (!isDateRangeValid.value) {
+    toast.add({
+      severity: 'error',
+      summary: 'Validasi Tanggal',
+      detail: 'Tanggal mulai tidak boleh lebih besar dari tanggal akhir',
+      life: 3000
+    });
+    return;
+  }
   page.value = 1; // Reset to first page when applying filter
   finishedProductsData();
 }
@@ -190,13 +228,15 @@ const clearItemName = () => {
                   <div class="booking-bar-inputs">
                     <VControl class="control mr-4">
                       <DatePicker v-model="filterRange.start" dateFormat="dd-mm-yy"
-                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 rounded-xl text-sm font-medium text-gray-700 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                        :class="{ 'border-red-500 focus:border-red-500 focus:ring-red-100': !isDateRangeValid, 'border-gray-200': isDateRangeValid }"
                         appendTo="body" placeholder="Start" />
                     </VControl>
 
                     <VControl class="control">
                       <DatePicker v-model="filterRange.end" dateFormat="dd-mm-yy"
-                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                        inputClass="datepicker-input w-full px-[38px] py-3 bg-white border-2 rounded-xl text-sm font-medium text-gray-700 focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200 hover:border-gray-300 appearance-none cursor-pointer shadow-sm"
+                        :class="{ 'border-red-500 focus:border-red-500 focus:ring-red-100': !isDateRangeValid, 'border-gray-200': isDateRangeValid }"
                         appendTo="body" placeholder="End" />
                     </VControl>
                   </div>
@@ -212,9 +252,9 @@ const clearItemName = () => {
                 </div>
 
                 <div class="relative">
-                  <input type="text" v-model="itemCode" @input="handleFilterChange" placeholder="Masukkan Kode Barang"
-                    class="w-full px-3 py-2 p-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-                           focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200 
+                  <input type="text" v-model="itemCode" placeholder="Masukkan Kode Barang"
+                    class="w-full px-3 py-2 p-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700
+                           focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200
                            hover:border-gray-300 appearance-none cursor-text shadow-sm" aria-label="Kode Barang" />
 
                   <!-- Tombol X di dalam input -->
@@ -236,9 +276,9 @@ const clearItemName = () => {
                 </div>
 
                 <div class="relative">
-                  <input type="text" v-model="itemName" @input="handleFilterChange" placeholder="Masukkan Nama Barang"
-                    class="w-full px-3 py-2 p-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700 
-                           focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200 
+                  <input type="text" v-model="itemName" placeholder="Masukkan Nama Barang"
+                    class="w-full px-3 py-2 p-10 bg-white border-2 border-gray-200 rounded-xl text-sm font-medium text-gray-700
+                           focus:border-purple-500 focus:ring-4 focus:ring-purple-100 transition-all duration-200
                            hover:border-gray-300 appearance-none cursor-text shadow-sm" aria-label="Nama Barang" />
 
                   <!-- Tombol X di dalam input -->
@@ -254,9 +294,11 @@ const clearItemName = () => {
               <!-- Search Button -->
               <div class="filter-group ml-auto">
                 <button @click="applyFilter"
-                  class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 
-                         text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 
-                         transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-purple-200 flex items-center justify-center space-x-2">
+                  :disabled="!isDateRangeValid"
+                  class="w-full sm:w-auto px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700
+                         text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5
+                         transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-purple-200 flex items-center justify-center space-x-2
+                         disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-purple-600 disabled:hover:to-pink-600 disabled:transform-none disabled:shadow-lg">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />

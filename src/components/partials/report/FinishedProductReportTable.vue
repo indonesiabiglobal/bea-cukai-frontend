@@ -233,7 +233,7 @@ async function exportExcel() {
                             <td
                                 class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold text-green-600">
                                 {{
-                                    r.msk }}</td>
+                                    r.masuk }}</td>
                             <td
                                 class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold text-red-600">
                                 {{
@@ -242,10 +242,10 @@ async function exportExcel() {
                                 r.peny }}</td>
                             <td
                                 class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-bold text-blue-600">
-                                {{ r.akhr }}
+                                {{ r.akhir }}
                             </td>
                             <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold">{{
-                                r.akhr }}</td>
+                                r.opname }}</td>
                             <td class="px-3 py-2 text-right border-r border-gray-200 bg-gray-50 font-semibold" :class="{
                                 'text-green-600': toNum(r.selisih) > 0,
                                 'text-red-600': toNum(r.selisih) < 0
